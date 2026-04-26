@@ -1,22 +1,25 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.gradle)
 }
 
+val apiKey: String = project.findProperty("NEWS_API_KEY") as String? ?: ""
 android {
     namespace = "com.estudiante.techscoop"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.estudiante.techscoop"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
+
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "NEWS_API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -33,15 +36,35 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
+
+
 }
 
 dependencies {
+    // --- NUEVO: Networking ---
+    implementation(libs.retrofit)                      // Cliente HTTP
+    implementation(libs.converter.gson)                // Convertidor JSON -> Kotlin
+    implementation(platform(libs.okhttp.bom))          // BOM para versiones compatibles
+    implementation(libs.okhttp)                        // OkHttp (transporte HTTP)
+    implementation(libs.okhttp.logging)                // Logging de peticiones
+    // --- NUEVO: Carga de imagenes ---
+    implementation(libs.coil)                          // Coil
+    // --- NUEVO: Coroutines ---
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)
+
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
