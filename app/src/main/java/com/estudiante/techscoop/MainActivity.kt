@@ -1,17 +1,21 @@
 package com.estudiante.techscoop
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.estudiante.techscoop.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -32,53 +36,83 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        setupToolbar()
+
         val adapter = ArticleTestAdapter(emptyList())
         binding.rvArticles.layoutManager = LinearLayoutManager(this)
         binding.rvArticles.adapter = adapter
 
-        // Observar errores
+        viewModel.loading.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (isLoading) {
+                binding.tvStatus.text = "⏳ Cargando últimas noticias..."
+                binding.tvStatus.setBackgroundColor(0xFFE8EAF6.toInt())
+                binding.tvCount.text = ""
+            }
+        }
+
         viewModel.error.observe(this) { errorMsg ->
             if (errorMsg != null) {
-                binding.progressBar.visibility = View.GONE
-                binding.btnFetch.isEnabled = true
                 binding.tvStatus.text = "❌ Error: $errorMsg"
                 binding.tvStatus.setBackgroundColor(0xFFFFCDD2.toInt())
                 binding.tvCount.text = ""
             }
         }
 
-        // Observar artículos
         viewModel.news.observe(this) { articles ->
-            binding.progressBar.visibility = View.GONE
-            binding.btnFetch.isEnabled = true
-
             if (!articles.isNullOrEmpty()) {
-                binding.tvStatus.text = "✅ API respondió correctamente"
+                binding.tvStatus.text = "✅ Noticias actualizadas"
                 binding.tvStatus.setBackgroundColor(0xFFE8F5E9.toInt())
-                binding.tvCount.text = "  ${articles.size} artículos obtenidos de TechCrunch"
+                binding.tvCount.text = "  ${articles.size} artículos de TechCrunch"
                 adapter.updateData(articles)
             }
         }
 
-        // Botón → llamar API
-        binding.btnFetch.setOnClickListener {
-            binding.btnFetch.isEnabled = false
-            binding.progressBar.visibility = View.VISIBLE
-            binding.tvStatus.text = "⏳ Llamando a la API..."
-            binding.tvStatus.setBackgroundColor(0xFFE8EAF6.toInt())
-            binding.tvCount.text = ""
-            adapter.updateData(emptyList())
+        if (savedInstanceState == null && viewModel.news.value.isNullOrEmpty()) {
             viewModel.fetchNews()
         }
     }
-}
 
-// ─── Adapter ─────────────────────────────────────────────────────────────────
+    private fun setupToolbar() {
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_search -> {
+                    startActivity(Intent(this, BusquedaActivity::class.java))
+                    true
+                }
+                R.id.action_perfil -> {
+                    startActivity(Intent(this, PerfilActivity::class.java))
+                    true
+                }
+                R.id.action_cerrar_sesion -> {
+                    confirmLogout()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun confirmLogout() {
+        AlertDialog.Builder(this)
+            .setTitle("Cerrar sesión")
+            .setMessage("¿Seguro que quieres cerrar sesión?")
+            .setPositiveButton("Sí") { _, _ ->
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+}
 
 class ArticleTestAdapter(private var articles: List<DataArticle>) :
     RecyclerView.Adapter<ArticleTestAdapter.VH>() {
 
     inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+        val ivImage: ImageView = view.findViewById(R.id.ivArticleImage)
         val tvSource: TextView = view.findViewById(R.id.tvSource)
         val tvTitle: TextView = view.findViewById(R.id.tvArticleTitle)
         val tvDescription: TextView = view.findViewById(R.id.tvDescription)
@@ -99,6 +133,12 @@ class ArticleTestAdapter(private var articles: List<DataArticle>) :
         holder.tvDescription.text = article.description ?: "Sin descripción"
         holder.tvAuthor.text = "✍️ ${article.author ?: "Desconocido"}"
         holder.tvDate.text = article.publishedAt?.take(10) ?: ""
+
+        holder.ivImage.load(article.urlToImage) {
+            crossfade(true)
+            placeholder(R.drawable.ic_placeholder)
+            error(R.drawable.ic_placeholder)
+        }
     }
 
     override fun getItemCount() = articles.size

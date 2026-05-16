@@ -8,12 +8,12 @@ plugins {
 val apiKey: String = project.findProperty("NEWS_API_KEY") as String? ?: ""
 android {
     namespace = "com.estudiante.techscoop"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.estudiante.techscoop"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
 
         versionCode = 1
         versionName = "1.0"

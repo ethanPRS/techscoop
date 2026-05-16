@@ -66,4 +66,44 @@ class ArticleRepository {
             }
         }
     }
+
+    suspend fun searchNews(filters: SearchFilters): ApiResult {
+        return withContext(Dispatchers.IO) {
+            try {
+                val apiKey = BuildConfig.NEWS_API_KEY
+                if (apiKey.isBlank() || apiKey == "TU_API_KEY_AQUI") {
+                    return@withContext ApiResult.Error(
+                        0,
+                        "API Key no configurada. Agrega NEWS_API_KEY en gradle.properties"
+                    )
+                }
+
+                if (filters.query.isBlank()) {
+                    return@withContext ApiResult.Error(0, "Escribe algo para buscar")
+                }
+
+                val response = api.searchEverything(
+                    query = filters.query,
+                    sources = filters.sources?.takeIf { it.isNotBlank() },
+                    language = filters.language?.takeIf { it.isNotBlank() },
+                    sortBy = filters.sortBy?.takeIf { it.isNotBlank() },
+                    from = filters.from?.takeIf { it.isNotBlank() },
+                    to = filters.to?.takeIf { it.isNotBlank() },
+                    apiKey = apiKey
+                )
+
+                if (response.isSuccessful) {
+                    val articles = response.body()?.articles ?: emptyList()
+                    ApiResult.Success(articles)
+                } else {
+                    val errorBody = response.errorBody()?.string() ?: "Sin detalle"
+                    ApiResult.Error(response.code(), "HTTP ${response.code()}: $errorBody")
+                }
+            } catch (e: java.net.UnknownHostException) {
+                ApiResult.Exception("Sin conexión a internet")
+            } catch (e: kotlin.Exception) {
+                ApiResult.Exception(e.message ?: "Error desconocido")
+            }
+        }
+    }
 }
