@@ -1,7 +1,8 @@
-package com.estudiante.techscoop
+package com.estudiante.techscoop.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.estudiante.techscoop.R
 import com.estudiante.techscoop.databinding.BusquedaActivityBinding
 
 class BusquedaActivity : AppCompatActivity() {

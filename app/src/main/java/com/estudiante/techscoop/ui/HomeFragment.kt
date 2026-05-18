@@ -1,0 +1,83 @@
+package com.estudiante.techscoop.ui
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.estudiante.techscoop.R
+import com.estudiante.techscoop.databinding.FragmentHomeBinding
+import com.estudiante.techscoop.viewmodel.NewsViewModel
+
+class HomeFragment : Fragment() {
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: NewsViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val adapter = ArticleTestAdapter(emptyList()) { article ->
+            val fragment = ArticleDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("article", article)
+                }
+            }
+            parentFragmentManager.commit {
+                replace(R.id.main_fragment_container, fragment)
+                addToBackStack(null)
+                setReorderingAllowed(true)
+            }
+        }
+        binding.rvArticles.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvArticles.adapter = adapter
+
+        viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            if (isLoading) {
+                binding.tvStatus.text = "⏳ Cargando últimas noticias..."
+                binding.tvStatus.setBackgroundColor(0xFFE8EAF6.toInt())
+                binding.tvCount.text = ""
+            }
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+            if (errorMsg != null) {
+                binding.tvStatus.text = "❌ Error: $errorMsg"
+                binding.tvStatus.setBackgroundColor(0xFFFFCDD2.toInt())
+                binding.tvCount.text = ""
+            }
+        }
+
+        viewModel.news.observe(viewLifecycleOwner) { articles ->
+            if (!articles.isNullOrEmpty()) {
+                binding.tvStatus.text = "✅ Noticias actualizadas"
+                binding.tvStatus.setBackgroundColor(0xFFE8F5E9.toInt())
+                binding.tvCount.text = "  ${articles.size} artículos de TechCrunch"
+                adapter.updateData(articles)
+            }
+        }
+
+        if (viewModel.news.value.isNullOrEmpty()) {
+            viewModel.fetchNews()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
