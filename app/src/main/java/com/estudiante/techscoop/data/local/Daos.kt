@@ -1,0 +1,27 @@
+package com.estudiante.techscoop.data.local
+
+import androidx.room.*
+
+@Dao
+interface UserDao {
+    @Query("SELECT * FROM user_profile WHERE uid = 1")
+    suspend fun getUser(): UserEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(user: UserEntity)
+
+    @Update
+    suspend fun updateUser(user: UserEntity)
+}
+
+@Dao
+interface PreferenceDao {
+    @Query("SELECT * FROM feed_preferences WHERE id = 1")
+    suspend fun getPreferences(): FeedPreferenceEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPreferences(prefs: FeedPreferenceEntity)
+
+    @Update
+    suspend fun updatePreferences(prefs: FeedPreferenceEntity)
+}
