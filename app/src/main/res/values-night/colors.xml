@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ts_primary">#CFC7DE</color>
+    <color name="ts_on_primary">#302C39</color>
+    <color name="ts_primary_container">#474252</color>
+    <color name="ts_on_primary_container">#E8E3F0</color>
+    <color name="ts_secondary">#C7C0D5</color>
+    <color name="ts_on_secondary">#332E3D</color>
+    <color name="ts_background">#14121A</color>
+    <color name="ts_on_background">#E8E1ED</color>
+    <color name="ts_surface">#1C1922</color>
+    <color name="ts_on_surface">#E8E1ED</color>
+    <color name="ts_outline">#958E9C</color>
+    <color name="ts_brand_soft">#3A3645</color>
+</resources>

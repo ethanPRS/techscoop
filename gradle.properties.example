@@ -1,0 +1,2 @@
+# Copia este archivo como gradle.properties o pon la clave en local.properties:
+NEWS_API_KEY=tu_clave_de_newsapi

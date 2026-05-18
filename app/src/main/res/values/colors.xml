@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="ts_primary">#5B5864</color>
+    <color name="ts_on_primary">#FFFFFFFF</color>
+    <color name="ts_primary_container">#E8E3F0</color>
+    <color name="ts_on_primary_container">#1E1B24</color>
+    <color name="ts_secondary">#7A748A</color>
+    <color name="ts_on_secondary">#FFFFFFFF</color>
+    <color name="ts_background">#F4F2F7</color>
+    <color name="ts_on_background">#1F1B24</color>
+    <color name="ts_surface">#FFFBFF</color>
+    <color name="ts_on_surface">#1F1B24</color>
+    <color name="ts_outline">#7B7482</color>
+    <color name="ts_brand_soft">#DAD3E6</color>
+</resources>

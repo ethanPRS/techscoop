@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">TechScoop</string>
+    <string name="home_title">TechScoop</string>
+    <string name="home_subtitle">Encuentra y guarda noticias de tecnologia en segundos</string>
+    <string name="brand_caption">Tu dosis diaria de tecnologia</string>
+    <string name="home_explore_button">Explorar noticias</string>
+    <string name="home_saved_button">Ver guardadas</string>
+    <string name="home_login_button">Iniciar sesion</string>
+    <string name="home_logo">Logo de TechScoop</string>
+    <string name="login_welcome">Bienvenido a TechScoop</string>
+    <string name="login_email">Correo electronico</string>
+    <string name="login_password">Contrasena</string>
+    <string name="login_google_sign_in">Continuar con Google</string>
+    <string name="login_button">Entrar</string>
+    <string name="login_required_fields">Ingresa correo y contrasena para continuar</string>
+
+    <string name="feed_title">Noticias destacadas</string>
+    <string name="news_image">Imagen de la noticia</string>
+    <string name="news_favorite">Marcar como favorita</string>
+    <string name="news_opened">Abriendo noticia</string>
+    <string name="news_saved">Guardada en favoritos</string>
+
+    <string name="search_hint">Buscar noticias, temas o fuentes</string>
+    <string name="search_empty">No hay resultados para tu busqueda</string>
+
+    <string name="profile_photo">Foto de perfil</string>
+    <string name="profile_edit">Editar perfil</string>
+    <string name="profile_manage_interests">Gestionar intereses</string>
+    <string name="profile_logout">Cerrar sesion</string>
+    <string name="profile_saved">Cambios guardados</string>
+
+    <string name="interests_title">Elige tus intereses</string>
+    <string name="interests_subtitle">Selecciona categorias para personalizar tu feed</string>
+    <string name="interest_ai">IA</string>
+    <string name="interest_mobile">Mobile</string>
+    <string name="interest_cloud">Cloud</string>
+    <string name="interest_security">Seguridad</string>
+    <string name="interest_data">Data</string>
+    <string name="interest_gadgets">Gadgets</string>
+    <string name="interests_save">Guardar intereses</string>
+    <string name="interests_saved">Intereses actualizados</string>
+
+    <string name="nav_home">Inicio</string>
+    <string name="nav_profile">Perfil</string>
+    <string name="nav_feed">Feed</string>
+    <string name="demo_user_name">Usuario TechScoop</string>
+    <string name="demo_user_email">usuario@techscoop.app</string>
+
+    <string name="nav_home_short">Inicio</string>
+    <string name="nav_explore_short">Explorar</string>
+    <string name="nav_saved_short">Guardadas</string>
+    <string name="toolbar_home_title">Inicio</string>
+    <string name="toolbar_explore_title">Explorar noticias</string>
+    <string name="toolbar_saved_title">Noticias guardadas</string>
+    <string name="menu_more">Mas opciones</string>
+    <string name="menu_refresh">Actualizar</string>
+    <string name="menu_options">Opciones</string>
+    <string name="menu_more_message">Ajustes generales de la app (pronto)</string>
+    <string name="menu_refresh_done">Lista actualizada</string>
+
+    <string name="home_recommended_title">Recomendadas para ti</string>
+    <string name="home_recommended_subtitle">Basadas en tus intereses</string>
+    <string name="saved_screen_title">Tus noticias guardadas</string>
+    <string name="saved_empty_message">Aun no tienes noticias guardadas. Abre el menu de tres puntos en una noticia y elige Guardar.</string>
+
+    <string name="login_no_account">No tienes cuenta? Registrate</string>
+    <string name="login_forgot_password">No recuerdas tu contrasena?</string>
+    <string name="login_register_soon">Registro disponible proximamente.</string>
+    <string name="login_forgot_soon">Recuperacion de contrasena proximamente.</string>
+
+    <string name="settings_privacy">Privacidad</string>
+    <string name="settings_censorship">Opciones de censura</string>
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_help">Ayuda y soporte</string>
+    <string name="settings_privacy_message">Centro de privacidad (demo)</string>
+    <string name="settings_censorship_message">Filtros de contenido (demo)</string>
+    <string name="settings_notifications_message">Preferencias de notificaciones (demo)</string>
+    <string name="settings_help_message">Contacta soporte: soporte@techscoop.app (demo)</string>
+
+    <string name="edit_profile_name">Nombre visible</string>
+    <string name="edit_profile_pick_photo">Cambiar foto</string>
+    <string name="edit_profile_save">Guardar cambios</string>
+
+    <string name="feed_option_sort_recent">Ordenar por mas recientes</string>
+    <string name="feed_option_filter_sources">Filtrar por fuentes</string>
+    <string name="offline_gate_icon_desc">Sin conexion a internet</string>
+    <string name="offline_gate_title">Sin conexion a internet</string>
+    <string name="offline_gate_subtitle">TechScoop necesita red para mostrar noticias y mantener tu sesion activa.</string>
+    <string name="offline_gate_hints">• Activa Wi‑Fi o datos moviles\n• Comprueba que tengas senal\n• Desactiva el modo avion si esta encendido</string>
+    <string name="offline_gate_retry">Comprobar conexion</string>
+    <string name="offline_gate_auto_resume">La app continuara sola cuando detecte internet.</string>
+    <string name="offline_gate_still_offline">Sigue sin haber conexion. Intenta de nuevo en unos segundos.</string>
+    <string name="offline_gate_back_online">Conexion restablecida</string>
+    <string name="saved_download_failed">No se pudo guardar el articulo</string>
+    <string name="saved_already">Ya esta en tus guardadas</string>
+
+    <string name="news_card_menu">Opciones de la noticia</string>
+    <string name="news_menu_save">Guardar en favoritos</string>
+    <string name="news_menu_not_interested">No me interesa</string>
+    <string name="news_saved_to_list">Guardada en Noticias guardadas</string>
+    <string name="news_not_interested_done">Ocultaremos noticias similares</string>
+    <string name="article_reader_title">Articulo</string>
+</resources>

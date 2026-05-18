@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "189697187607",
+    "project_id": "techscoop-ea17c",
+    "storage_bucket": "techscoop-ea17c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189697187607:android:4b3e8575b5ceb3ecf06152",
+        "android_client_info": {
+          "package_name": "com.juanpabloramos.techscoop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189697187607-olc29dgrc13dj2jg9kqre84r64cu5fiu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4koXL0hIUpVlv22w5GQ21a5MOO1Vn1ug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189697187607-olc29dgrc13dj2jg9kqre84r64cu5fiu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
