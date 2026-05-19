@@ -46,7 +46,6 @@ class ProfileFragment : Fragment() {
     private var latestPhotoFile: File? = null
     private var currentImageUri: Uri? = null
 
-    /** Tracks whether the UI is in edit mode */
     private var isEditing = false
 
     private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -132,12 +131,18 @@ class ProfileFragment : Fragment() {
         binding.spinnerLanguage.setSelection(languagesApi.indexOf(PreferencesManager.getLanguage()).takeIf { it >= 0 } ?: 0)
         binding.spinnerSortBy.setSelection(sortApi.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
 
+        // AUTOGUARDADO DE PREFERENCIAS
+        // Creamos un Listener que se activará cada vez que el usuario
+        // toque cualquiera de los tres menús desplegables
         val spinnerListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Obtenemos qué posición (0, 1, 2...) está seleccionada en cada menú en este instante.
                 val selectedCatIndex = binding.spinnerCategory.selectedItemPosition
                 val selectedLangIndex = binding.spinnerLanguage.selectedItemPosition
                 val selectedSortIndex = binding.spinnerSortBy.selectedItemPosition
 
+                // Guardamos directamente en PreferencesManager las palabras clave exactas que necesita la API
+                // (ej. "en" en vez de "English"). Si algo falla, asignamos un valor por defecto.
                 PreferencesManager.savePreferences(
                     language = languagesApi.getOrElse(selectedLangIndex) { "en" },
                     category = categoriesApi.getOrElse(selectedCatIndex) { "technology" },
@@ -148,6 +153,7 @@ class ProfileFragment : Fragment() {
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
 
+        // Conectamos nuestro listener a los tres menús para que estén sincronizados.
         binding.spinnerCategory.onItemSelectedListener = spinnerListener
         binding.spinnerLanguage.onItemSelectedListener = spinnerListener
         binding.spinnerSortBy.onItemSelectedListener = spinnerListener

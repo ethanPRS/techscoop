@@ -58,21 +58,35 @@ class HomeFragment : Fragment() {
             }
         }
 
+        //  MANEJO DE NOTICIAS
         viewModel.news.observe(viewLifecycleOwner) { articles ->
             adapter.updateData(articles ?: emptyList())
+            
             if (!articles.isNullOrEmpty()) {
+                // Si la API nos devuelve noticias, mostramos el mensaje de bienvenida 
+                // (solo si no se ha mostrado antes en esta sesión)
                 if (!SessionManager.isWelcomeToastShown) {
                     android.widget.Toast.makeText(requireContext(), "Estas viendo las noticias mas recientes de hoy!!", android.widget.Toast.LENGTH_LONG).show()
                     SessionManager.isWelcomeToastShown = true
                 }
             } else {
+                // Si la API devuelve 0 resultados,
+                // en lugar de dejar la pantalla en blanco, informamos al usuario de forma amigable.
                 android.widget.Toast.makeText(requireContext(), "No se encontraron noticias para estas preferencias", android.widget.Toast.LENGTH_SHORT).show()
             }
         }
 
+        // SISTEMA REACTIVO DE PREFERENCIAS
+        // Observamos el timbre del PreferencesManager. Cuando el usuario cambia el idioma o categoría
+        // en su perfil, este observer se activa automáticamente.
         PreferencesManager.preferencesChanged.observe(viewLifecycleOwner) { timestamp ->
+            // Verificamos el timestamp para asegurarnos de que es una configuración nueva
+            // y no una vieja señal recargada por rotar la pantalla.
             if (timestamp > viewModel.lastPreferencesTimestamp) {
                 viewModel.lastPreferencesTimestamp = timestamp
+                
+                // Si hay internet, mandamos traer las noticias nuevas inmediatamente
+                // usando las nuevas preferencias, actualizando el feed en tiempo real.
                 if (NetworkUtils.isOnline(requireContext())) {
                     viewModel.fetchNews()
                 } else {
