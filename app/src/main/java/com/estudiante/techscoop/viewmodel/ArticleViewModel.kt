@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 class NewsViewModel : ViewModel() {
 
     private val repository = ArticleRepository()
-
     val news = MutableLiveData<List<DataArticle>>()
     val error = MutableLiveData<String?>()
     val loading = MutableLiveData<Boolean>()

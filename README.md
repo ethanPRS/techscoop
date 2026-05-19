@@ -54,6 +54,18 @@ Si prefieres no escribir la key en el archivo, define la variable `NEWS_API_KEY`
 
 > Sin esta key la app mostrará el error **"API Key no configurada"**.
 
+### 3.1 Google Sign-In (todo el equipo con el mismo SHA-1)
+
+No se puede poner el SHA-1 “en el código”: Google valida la **firma del APK**. El proyecto usa un **keystore compartido** en `app/team-debug.keystore` para que debug siempre tenga la misma huella.
+
+1. Clona el repo (incluye `team-debug.keystore` y `team-keystore.properties`).
+2. Compila en modo **debug** (Run en Android Studio); Gradle ya apunta a ese keystore.
+3. **Una vez**, quien tenga acceso a Firebase debe registrar el SHA-1 del equipo y bajar el `google-services.json` nuevo (ver **[docs/GOOGLE_SIGNIN_EQUIPO.md](docs/GOOGLE_SIGNIN_EQUIPO.md)**).
+
+SHA-1 a registrar en Firebase:
+
+`C3:0C:63:43:E8:0C:F7:1C:79:E6:2E:78:03:39:B5:C3:94:A9:8D:E9`
+
 ### 4. Verificar `local.properties`
 
 El archivo `local.properties` se crea automáticamente al abrir el proyecto y apunta a tu SDK de Android. Si no existe, créalo en la raíz con:

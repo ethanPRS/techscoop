@@ -46,7 +46,6 @@ class ArticleDetailFragment : Fragment(R.layout.detalle_fragment) {
         if (url.isNullOrBlank()) return
 
         binding.webView.apply {
-            // Habilitar scroll anidado para que funcione dentro de NestedScrollView
             ViewCompat.setNestedScrollingEnabled(this, true)
 
             @android.annotation.SuppressLint("SetJavaScriptEnabled")

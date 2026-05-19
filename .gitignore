@@ -2,6 +2,7 @@
 # 🛠️ Android / Gradle
 # =========================
 .gradle/
+.kotlin/
 build/
 */build/
 
@@ -44,6 +45,8 @@ output.json
 # =========================
 *.jks
 *.keystore
+# Keystore compartido del equipo (Google Sign-In con un solo SHA-1 en Firebase)
+!app/team-debug.keystore
 
 # =========================
 # 🧪 Build intermediates

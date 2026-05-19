@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "189697187607-o50dqgar51hct01oc9fr38mfqiijvcb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.juanpabloramos.techscoop",
+            "certificate_hash": "c30c6343e80cf71c79e62e780339b5c394a98de9"
+          }
+        },
+        {
           "client_id": "189697187607-olc29dgrc13dj2jg9kqre84r64cu5fiu.apps.googleusercontent.com",
           "client_type": 3
         }
