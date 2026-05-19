@@ -34,6 +34,15 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
 
+    private val categoriesDisplay = arrayOf("Technology", "Business", "Sports", "Entertainment", "General", "Science", "Health")
+    private val categoriesApi = arrayOf("technology", "business", "sports", "entertainment", "general", "science", "health")
+
+    private val languagesDisplay = arrayOf("Inglés", "Español")
+    private val languagesApi = arrayOf("en", "es")
+
+    private val sortDisplay = arrayOf("Por fecha", "Relevancia", "Popularidad")
+    private val sortApi = arrayOf("publishedAt", "relevancy", "popularity")
+
     private var latestPhotoFile: File? = null
     private var currentImageUri: Uri? = null
 
@@ -75,25 +84,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupPreferencesUI() {
-        val categories = arrayOf("technology", "business", "sports", "entertainment", "general", "science", "health")
-        val languages = arrayOf("en", "es", "fr", "de", "")
-        val sortOptions = arrayOf("publishedAt", "relevancy", "popularity")
-
-        val catAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        val catAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoriesDisplay)
         catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = catAdapter
 
-        val langAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        val langAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languagesDisplay)
         langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerLanguage.adapter = langAdapter
 
-        val sortAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortOptions)
+        val sortAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortDisplay)
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSortBy.adapter = sortAdapter
 
-        binding.spinnerCategory.setSelection(categories.indexOf(PreferencesManager.getCategory()).takeIf { it >= 0 } ?: 0)
-        binding.spinnerLanguage.setSelection(languages.indexOf(PreferencesManager.getLanguage()).takeIf { it >= 0 } ?: 0)
-        binding.spinnerSortBy.setSelection(sortOptions.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
+        binding.spinnerCategory.setSelection(categoriesApi.indexOf(PreferencesManager.getCategory()).takeIf { it >= 0 } ?: 0)
+        binding.spinnerLanguage.setSelection(languagesApi.indexOf(PreferencesManager.getLanguage()).takeIf { it >= 0 } ?: 0)
+        binding.spinnerSortBy.setSelection(sortApi.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
     }
 
     private fun setupObservers() {
@@ -136,10 +141,14 @@ class ProfileFragment : Fragment() {
                 pass = binding.etPassword.text.toString(),
                 uri = currentImageUri?.toString()
             )
+            val selectedCatIndex = binding.spinnerCategory.selectedItemPosition
+            val selectedLangIndex = binding.spinnerLanguage.selectedItemPosition
+            val selectedSortIndex = binding.spinnerSortBy.selectedItemPosition
+
             PreferencesManager.savePreferences(
-                language = binding.spinnerLanguage.selectedItem.toString(),
-                category = binding.spinnerCategory.selectedItem.toString(),
-                sortBy = binding.spinnerSortBy.selectedItem.toString()
+                language = languagesApi.getOrElse(selectedLangIndex) { "en" },
+                category = categoriesApi.getOrElse(selectedCatIndex) { "technology" },
+                sortBy = sortApi.getOrElse(selectedSortIndex) { "publishedAt" }
             )
             Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show()
         }

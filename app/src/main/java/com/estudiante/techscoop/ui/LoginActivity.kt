@@ -1,6 +1,5 @@
 package com.estudiante.techscoop.ui
 
-import com.estudiante.techscoop.data.SessionManager
 
 import android.content.Intent
 import android.os.Bundle

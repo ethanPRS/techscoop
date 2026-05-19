@@ -71,8 +71,7 @@ class HomeFragment : Fragment() {
             if (NetworkUtils.isOnline(requireContext())) {
                 viewModel.fetchNews()
             } else {
-                binding.tvStatus.text = getString(R.string.offline_gate_title)
-                binding.tvStatus.setBackgroundColor(0xFFFFCDD2.toInt())
+                android.widget.Toast.makeText(requireContext(), getString(R.string.offline_gate_title), android.widget.Toast.LENGTH_LONG).show()
             }
         }
     }
