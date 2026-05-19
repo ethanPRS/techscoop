@@ -46,6 +46,9 @@ class ProfileFragment : Fragment() {
     private var latestPhotoFile: File? = null
     private var currentImageUri: Uri? = null
 
+    /** Tracks whether the UI is in edit mode */
+    private var isEditing = false
+
     private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) {
             launchCamera()
@@ -81,7 +84,36 @@ class ProfileFragment : Fragment() {
         setupPreferencesUI()
         setupObservers()
         setupListeners()
+        setEditMode(false) // start in read-only mode
     }
+
+    // ─────────────────────────── Edit Mode Toggle ───────────────────────────
+
+    private fun setEditMode(editing: Boolean) {
+        isEditing = editing
+
+        if (editing) {
+            // Populate EditTexts from the current read-only values
+            binding.etName.setText(binding.tvName.text)
+            binding.etEmail.setText(binding.tvEmail.text)
+            binding.etBio.setText(binding.tvBio.text)
+            binding.etPassword.setText(binding.tvPassword.tag as? String ?: "")
+
+            binding.layoutReadOnly.visibility = View.GONE
+            binding.layoutEditable.visibility = View.VISIBLE
+            binding.layoutPhotoButtons.visibility = View.VISIBLE
+            binding.btnSaveChanges.visibility = View.VISIBLE
+            binding.btnEditToggle.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+        } else {
+            binding.layoutReadOnly.visibility = View.VISIBLE
+            binding.layoutEditable.visibility = View.GONE
+            binding.layoutPhotoButtons.visibility = View.GONE
+            binding.btnSaveChanges.visibility = View.GONE
+            binding.btnEditToggle.setImageResource(android.R.drawable.ic_menu_edit)
+        }
+    }
+
+    // ─────────────────────────── Preferences Spinners ───────────────────────
 
     private fun setupPreferencesUI() {
         val catAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoriesDisplay)
@@ -101,6 +133,8 @@ class ProfileFragment : Fragment() {
         binding.spinnerSortBy.setSelection(sortApi.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
     }
 
+    // ─────────────────────────── Observers ───────────────────────────────────
+
     private fun setupObservers() {
         viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -115,10 +149,13 @@ class ProfileFragment : Fragment() {
 
         viewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
-                binding.etName.setText(it.name)
-                binding.etEmail.setText(it.email)
-                binding.etBio.setText(it.bio ?: "")
-                binding.etPassword.setText(it.password)
+                // Populate read-only TextViews
+                binding.tvName.text = it.name
+                binding.tvEmail.text = it.email
+                binding.tvBio.text = it.bio ?: ""
+                // Show masked password in read-only view, store real value in tag
+                binding.tvPassword.text = "••••••••"
+                binding.tvPassword.tag = it.password
 
                 it.profileImageUri?.let { uriString ->
                     currentImageUri = Uri.parse(uriString)
@@ -132,7 +169,18 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // ─────────────────────────── Click Listeners ────────────────────────────
+
     private fun setupListeners() {
+        binding.btnEditToggle.setOnClickListener {
+            if (isEditing) {
+                // Cancel editing — revert to read-only without saving
+                setEditMode(false)
+            } else {
+                setEditMode(true)
+            }
+        }
+
         binding.btnSaveChanges.setOnClickListener {
             viewModel.updateProfile(
                 name = binding.etName.text.toString(),
@@ -151,6 +199,9 @@ class ProfileFragment : Fragment() {
                 sortBy = sortApi.getOrElse(selectedSortIndex) { "publishedAt" }
             )
             Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show()
+
+            // Switch back to read-only mode after saving
+            setEditMode(false)
         }
 
         binding.btnDeactivate.setOnClickListener {

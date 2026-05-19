@@ -21,6 +21,9 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Card 1: Avatar + Photo Buttons              -->
+            <!-- ═══════════════════════════════════════════ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,11 +57,14 @@
                             android:contentDescription="Avatar de usuario" />
                     </com.google.android.material.card.MaterialCardView>
 
+                    <!-- Camera / Gallery buttons (only visible in edit mode) -->
                     <LinearLayout
+                        android:id="@+id/layoutPhotoButtons"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="16dp">
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCamera"
@@ -84,6 +90,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Card 2: User Info (Read / Edit)             -->
+            <!-- ═══════════════════════════════════════════ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,79 +108,190 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <!-- Header row: title + edit pencil -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Full Name"
-                        app:boxStrokeColor="#3F51B5"
-                        app:hintTextColor="#3F51B5">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etName"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="textPersonName"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_weight="1"
+                            android:text="Información Personal"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1A2E"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        <ImageButton
+                            android:id="@+id/btnEditToggle"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Editar perfil"
+                            android:scaleType="centerInside"
+                            app:tint="#3F51B5"/>
+                    </LinearLayout>
+
+                    <!-- ——— READ-ONLY views ——— -->
+                    <LinearLayout
+                        android:id="@+id/layoutReadOnly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Email Address"
-                        app:boxStrokeColor="#3F51B5"
-                        app:hintTextColor="#3F51B5">
+                        android:orientation="vertical">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etEmail"
+                        <!-- Name -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Full Name"
+                            android:textSize="12sp"
+                            android:textColor="#888888"
+                            android:layout_marginBottom="2dp"/>
+                        <TextView
+                            android:id="@+id/tvName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textEmailAddress"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:textSize="15sp"
+                            android:textColor="#1A1A2E"
+                            android:layout_marginBottom="14dp"/>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        <!-- Email -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Email Address"
+                            android:textSize="12sp"
+                            android:textColor="#888888"
+                            android:layout_marginBottom="2dp"/>
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="#1A1A2E"
+                            android:layout_marginBottom="14dp"/>
+
+                        <!-- Bio -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Biography"
+                            android:textSize="12sp"
+                            android:textColor="#888888"
+                            android:layout_marginBottom="2dp"/>
+                        <TextView
+                            android:id="@+id/tvBio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="#1A1A2E"
+                            android:layout_marginBottom="14dp"/>
+
+                        <!-- Password (masked) -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Password"
+                            android:textSize="12sp"
+                            android:textColor="#888888"
+                            android:layout_marginBottom="2dp"/>
+                        <TextView
+                            android:id="@+id/tvPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:textColor="#1A1A2E"/>
+                    </LinearLayout>
+
+                    <!-- ——— EDIT views (hidden by default) ——— -->
+                    <LinearLayout
+                        android:id="@+id/layoutEditable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:hint="Biography"
-                        app:boxStrokeColor="#3F51B5"
-                        app:hintTextColor="#3F51B5">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etBio"
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textMultiLine"
-                            android:gravity="top"
-                            android:lines="3"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginBottom="12dp"
+                            android:hint="Full Name"
+                            app:boxStrokeColor="#3F51B5"
+                            app:hintTextColor="#3F51B5">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Password"
-                        app:passwordToggleEnabled="true"
-                        app:boxStrokeColor="#3F51B5"
-                        app:hintTextColor="#3F51B5">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPersonName"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPassword"
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="textPassword"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginBottom="12dp"
+                            android:hint="Email Address"
+                            app:boxStrokeColor="#3F51B5"
+                            app:hintTextColor="#3F51B5">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:hint="Biography"
+                            app:boxStrokeColor="#3F51B5"
+                            app:hintTextColor="#3F51B5">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etBio"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textMultiLine"
+                                android:gravity="top"
+                                android:lines="3"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Password"
+                            app:passwordToggleEnabled="true"
+                            app:boxStrokeColor="#3F51B5"
+                            app:hintTextColor="#3F51B5">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textPassword"
+                                android:textSize="15sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Card 3: Preferencias de Noticias            -->
+            <!-- ═══════════════════════════════════════════ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -237,6 +357,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ═══════════════════════════════════════════ -->
+            <!-- Progress + Action Buttons                   -->
+            <!-- ═══════════════════════════════════════════ -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
@@ -245,6 +368,7 @@
                 android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
+            <!-- Save button (only shown in edit mode) -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveChanges"
                 android:layout_width="match_parent"
@@ -253,7 +377,8 @@
                 android:textSize="16sp"
                 android:backgroundTint="#3F51B5"
                 app:cornerRadius="12dp"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeactivate"

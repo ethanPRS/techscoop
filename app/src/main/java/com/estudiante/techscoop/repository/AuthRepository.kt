@@ -57,6 +57,19 @@ object AuthRepository {
     suspend fun syncUserToRoom(context: Context, email: String, name: String, password: String = "") {
         val dao = AppDatabase.getInstance(context).userDao()
         val repo = UserRepository(dao)
+        val existing = repo.getUser()
+
+        if (existing != null && existing.email == email) {
+            // Same user logging back in — preserve their profile data,
+            // only refresh the password if a new one was provided.
+            if (password.isNotBlank() && password != existing.password) {
+                repo.updateUser(existing.copy(password = password))
+            }
+            return
+        }
+
+        // Different user or first-time login — clear old data and create fresh profile
+        repo.clearAll()
         repo.insertUser(
             UserEntity(
                 name = name.ifBlank { email.substringBefore("@") },
@@ -81,8 +94,9 @@ object AuthRepository {
         } catch (_: Exception) {
         }
         SessionManager.clear(context)
-        val dao = AppDatabase.getInstance(context).userDao()
-        UserRepository(dao).clearAll()
+        // Note: user profile data is intentionally kept in ROOM so it
+        // persists across logout/login cycles for the same user.
+        // syncUserToRoom() handles cleanup when a *different* user logs in.
     }
 
     fun userMessage(context: Context, error: Throwable): String {
