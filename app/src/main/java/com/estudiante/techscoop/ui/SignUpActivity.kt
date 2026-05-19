@@ -9,10 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.SessionManager
+import com.estudiante.techscoop.data.SessionManager as AppSessionManager
 import com.estudiante.techscoop.repository.AuthRepository
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
+// Registro de cuenta nueva con Firebase (email/contraseña) y validación de formulario.
 class SignUpActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +26,7 @@ class SignUpActivity : AppCompatActivity() {
         val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
         val etConfirm = findViewById<TextInputEditText>(R.id.etConfirmPassword)
 
+        // Valida contraseñas coincidentes y longitud mínima antes de llamar a Firebase.
         findViewById<Button>(R.id.btnSignUp).setOnClickListener {
             val name = etName.text?.toString().orEmpty().trim()
             val email = etEmail.text?.toString().orEmpty().trim()
@@ -47,6 +50,7 @@ class SignUpActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvGoToLogin).setOnClickListener { finish() }
     }
 
+    // Crea usuario en Firebase, sincroniza Room y abre MainActivity.
     private fun register(name: String, email: String, password: String) {
         lifecycleScope.launch {
             AuthRepository.signUp(email, password, name).fold(
@@ -67,6 +71,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+    // Abre MainActivity sin volver al login con el botón Atrás.
     private fun goToMain() {
         startActivity(
             Intent(this, MainActivity::class.java).addFlags(

@@ -4,98 +4,104 @@
 
 
 
-    <string name="login_tagline">Tech news in one place</string>
+    <!-- Textos del flujo de autenticación (login, registro, errores) -->
+    <string name="login_tagline">Noticias tecnológicas en un solo lugar</string>
 
-    <string name="login_email">Email</string>
+    <string name="login_email">Correo electrónico</string>
 
-    <string name="login_password">Password</string>
+    <string name="login_password">Contraseña</string>
 
-    <string name="login_button">Sign In</string>
+    <string name="login_button">Entrar</string>
 
-    <string name="login_google_sign_in">Continue with Google</string>
+    <string name="login_google_sign_in">Continuar con Google</string>
 
-    <string name="login_required_fields">Enter email and password to continue</string>
+    <string name="login_required_fields">Ingresa correo y contraseña para continuar</string>
 
-    <string name="login_no_account">Don\'t have an account? Sign Up</string>
+    <string name="login_no_account">¿No tienes cuenta? Regístrate</string>
 
-    <string name="login_forgot_password">Forgot your password?</string>
-
-
-
-    <string name="signup_title">Create Account</string>
-
-    <string name="signup_name">Name (optional)</string>
-
-    <string name="signup_confirm">Confirm password</string>
-
-    <string name="signup_button">Sign Up</string>
-
-    <string name="signup_go_login">Already have an account? Sign In</string>
-
-    <string name="signup_password_mismatch">Passwords do not match</string>
-
-    <string name="signup_password_short">Minimum 6 characters</string>
+    <string name="login_forgot_password">¿Olvidaste tu contraseña?</string>
 
 
 
-    <string name="forgot_title">Reset Password</string>
+    <string name="signup_title">Crear cuenta</string>
 
-    <string name="forgot_hint">We\'ll send a reset link to your email</string>
+    <string name="signup_name">Nombre (opcional)</string>
 
-    <string name="forgot_send">Send Link</string>
+    <string name="signup_confirm">Confirmar contraseña</string>
 
-    <string name="forgot_success">Check your inbox</string>
+    <string name="signup_button">Registrarme</string>
 
-    <string name="forgot_back_login">Back to Sign In</string>
+    <string name="signup_go_login">¿Ya tienes cuenta? Inicia sesión</string>
 
+    <string name="signup_password_mismatch">Las contraseñas no coinciden</string>
 
-
-    <string name="auth_error_generic">Could not complete the operation</string>
-
-    <string name="auth_error_network">No connection. Check your internet and try again.</string>
-
-    <string name="auth_error_email_in_use">That email is already registered</string>
-
-    <string name="auth_error_weak_password">Password must be at least 6 characters</string>
-
-    <string name="auth_error_wrong_credentials">Incorrect email or password</string>
+    <string name="signup_password_short">Mínimo 6 caracteres</string>
 
 
 
-    <string name="google_sign_in_cancelled">Google sign-in cancelled</string>
+    <string name="forgot_title">Recuperar contraseña</string>
 
-    <string name="google_sign_in_failed">Could not sign in with Google</string>
+    <string name="forgot_hint">Te enviaremos un enlace a tu correo</string>
 
-    <string name="google_play_services_unavailable">Update Google Play on your device to continue</string>
+    <string name="forgot_send">Enviar enlace</string>
 
+    <string name="forgot_success">Revisa tu bandeja de entrada</string>
 
-
-    <string name="offline_gate_icon_desc">No internet connection</string>
-
-    <string name="offline_gate_title">No Internet Connection</string>
-
-    <string name="offline_gate_subtitle">TechScoop needs a network to show news and keep your session active.</string>
-
-    <string name="offline_gate_hints">• Turn on Wi‑Fi or mobile data\n• Check that you have signal\n• Turn off airplane mode if it\'s on</string>
-
-    <string name="offline_gate_retry">Check Connection</string>
-
-    <string name="offline_gate_auto_resume">The app will resume automatically when internet is detected.</string>
-
-    <string name="offline_gate_still_offline">Still no connection. Try again in a few seconds.</string>
-
-    <string name="offline_gate_back_online">Connection restored</string>
+    <string name="forgot_back_login">Volver al inicio de sesión</string>
 
 
 
-    <string name="notif_channel_news">New articles</string>
+    <string name="auth_error_generic">No se pudo completar la operación</string>
 
-    <string name="notif_channel_reminder">Reminders</string>
+    <string name="auth_error_network">Sin conexión. Comprueba tu internet e inténtalo de nuevo.</string>
 
-    <string name="notif_news_title">New article on TechScoop</string>
+    <string name="auth_error_email_in_use">Ese correo ya está registrado</string>
 
-    <string name="notif_reminder_title">We miss you</string>
+    <string name="auth_error_weak_password">La contraseña debe tener al menos 6 caracteres</string>
 
-    <string name="notif_reminder_body">Open TechScoop and check the latest tech news</string>
+    <string name="auth_error_wrong_credentials">Correo o contraseña incorrectos</string>
+
+
+
+    <!-- Mensajes del flujo Google Sign-In -->
+    <string name="google_sign_in_cancelled">Inicio con Google cancelado</string>
+
+    <string name="google_sign_in_failed">No se pudo iniciar sesión con Google</string>
+
+    <string name="google_play_services_unavailable">Actualiza Google Play en tu dispositivo para continuar</string>
+
+
+
+    <!-- Pantalla y toasts del modo sin conexión -->
+    <string name="offline_gate_icon_desc">Sin conexión a internet</string>
+
+    <string name="offline_gate_title">Sin conexión a internet</string>
+
+    <string name="offline_gate_subtitle">TechScoop necesita red para mostrar noticias y mantener tu sesión activa.</string>
+
+    <string name="offline_gate_hints">• Activa Wi‑Fi o datos móviles\n• Comprueba que tengas señal\n• Desactiva el modo avión si está encendido</string>
+
+    <string name="offline_gate_retry">Comprobar conexión</string>
+
+    <string name="offline_gate_auto_resume">La app continuará sola cuando detecte internet.</string>
+
+    <string name="offline_gate_still_offline">Sigue sin haber conexión. Intenta de nuevo en unos segundos.</string>
+
+    <string name="offline_gate_back_online">Conexión restablecida</string>
+
+
+
+    <!-- Notificaciones locales periódicas (WorkManager) -->
+    <string name="notif_channel_news">Nuevas noticias</string>
+
+    <string name="notif_channel_reminder">Recordatorios</string>
+
+    <string name="notif_news_title">Nueva noticia en TechScoop</string>
+
+    <string name="notif_reminder_title">Te extrañamos</string>
+
+    <string name="notif_reminder_body">Abre TechScoop y revisa las últimas noticias tech</string>
 
 </resources>
+
+

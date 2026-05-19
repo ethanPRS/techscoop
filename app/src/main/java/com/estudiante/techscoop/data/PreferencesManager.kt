@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
  * PreferencesManager guardar la configuración
  * del usuario (idioma, categoría y orden) de forma persistente en el dispositivo.
  * Utiliza SharedPreferences para que los datos no se borren al cerrar la aplicación.
+ * Requiere init() en TechScoopApp.
  */
 object PreferencesManager {
     // Nombre del archivo interno donde Android guardará estas preferencias
@@ -35,6 +36,8 @@ object PreferencesManager {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
+    // Valores por defecto: language "es"|"en", category technology|business|..., sortBy publishedAt|relevancy|popularity
+    
     /**
      * Guarda la selección del usuario (idioma, categoría y orden) en el teléfono.
      * Vincula los datos al correo actual para que si inicia sesión otra persona,

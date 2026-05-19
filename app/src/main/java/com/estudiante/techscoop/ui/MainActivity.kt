@@ -5,8 +5,6 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
-import com.estudiante.techscoop.data.PreferencesManager
-import com.estudiante.techscoop.data.SessionManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -23,9 +21,11 @@ import com.estudiante.techscoop.R
 import com.estudiante.techscoop.databinding.ActivityMainBinding
 import com.estudiante.techscoop.notifications.NotificationScheduler
 
+// Pantalla principal: navegación inferior, bloqueo offline y permiso/programación de notificaciones.
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    // Escucha cambios de red para mostrar u ocultar la pantalla offline automáticamente.
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var wasOffline = false
 
@@ -36,15 +36,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        SessionManager.init(applicationContext)
-        PreferencesManager.init(applicationContext)
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        // Botón de la pantalla offline: vuelve a comprobar conectividad.
         findViewById<Button>(R.id.btnRetryConnection).setOnClickListener {
             applyOfflineUi(userTriggeredRetry = true)
         }
@@ -70,11 +68,13 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
+        // Al abrir la app: comprueba red, pide permiso de notificaciones (API 33+) y programa WorkManager.
         applyOfflineUi()
         requestNotificationPermissionIfNeeded()
         NotificationScheduler.schedule(this)
     }
 
+    // Registra NetworkCallback para reaccionar cuando vuelve Wi‑Fi o datos.
     override fun onStart() {
         super.onStart()
         val cm = getSystemService(ConnectivityManager::class.java) ?: return
@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
         applyOfflineUi()
     }
 
+    // Android 13+: permiso POST_NOTIFICATIONS obligatorio para mostrar avisos.
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -116,6 +117,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
+            // Sin Internet no se cambia de pestaña (evita fragments que llaman API).
             if (OfflineState.isActive(this)) return@setOnItemSelectedListener false
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
@@ -135,6 +137,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    // Muestra u oculta el include offlineGate y el contenido principal de la app.
     private fun applyOfflineUi(userTriggeredRetry: Boolean = false) {
         val gate = findViewById<View>(R.id.offlineGate)
         if (OfflineState.isActive(this)) {

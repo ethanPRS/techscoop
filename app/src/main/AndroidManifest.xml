@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Permiso para mostrar notificaciones en Android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
@@ -12,16 +13,17 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Permite detectar Google Play Services y abrir el flujo de Google Sign-In en API 30+ -->
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:mimeType="image/*" />
         </intent>
-        <!-- Android 11+: permite abrir el flujo de Google Sign-In -->
         <package android:name="com.google.android.gms" />
     </queries>
 
     <application
+        android:name=".TechScoopApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -42,6 +44,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <!-- Activity de entrada: login antes de MainActivity -->
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -55,6 +58,7 @@
             android:name=".ui.MainActivity"
             android:exported="false" />
 
+        <!-- Pantallas del flujo de autenticación (no exportadas al launcher) -->
         <activity
             android:name=".ui.SignUpActivity"
             android:exported="false" />
