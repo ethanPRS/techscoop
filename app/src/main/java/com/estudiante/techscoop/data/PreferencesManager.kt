@@ -2,6 +2,8 @@ package com.estudiante.techscoop.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 object PreferencesManager {
     private const val PREFS_NAME = "techscoop_user_prefs"
@@ -9,6 +11,9 @@ object PreferencesManager {
     private const val KEY_LANGUAGE = "pref_language_"
     private const val KEY_CATEGORY = "pref_category_"
     private const val KEY_SORT_BY = "pref_sort_by_"
+
+    private val _preferencesChanged = MutableLiveData<Long>()
+    val preferencesChanged: LiveData<Long> get() = _preferencesChanged
 
     private lateinit var prefs: SharedPreferences
 
@@ -28,6 +33,8 @@ object PreferencesManager {
             .putString(KEY_CATEGORY + userEmail, category)
             .putString(KEY_SORT_BY + userEmail, sortBy)
             .apply()
+        
+        _preferencesChanged.postValue(System.currentTimeMillis())
     }
 
     fun getLanguage(): String {

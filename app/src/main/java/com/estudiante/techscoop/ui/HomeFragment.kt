@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.estudiante.techscoop.NetworkUtils
 import com.estudiante.techscoop.R
+import com.estudiante.techscoop.data.PreferencesManager
 import com.estudiante.techscoop.data.SessionManager
 import com.estudiante.techscoop.databinding.FragmentHomeBinding
 import com.estudiante.techscoop.viewmodel.NewsViewModel
@@ -58,17 +59,31 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.news.observe(viewLifecycleOwner) { articles ->
+            adapter.updateData(articles ?: emptyList())
             if (!articles.isNullOrEmpty()) {
-                adapter.updateData(articles)
                 if (!SessionManager.isWelcomeToastShown) {
                     android.widget.Toast.makeText(requireContext(), "Estas viendo las noticias mas recientes de hoy!!", android.widget.Toast.LENGTH_LONG).show()
                     SessionManager.isWelcomeToastShown = true
                 }
+            } else {
+                android.widget.Toast.makeText(requireContext(), "No se encontraron noticias para estas preferencias", android.widget.Toast.LENGTH_SHORT).show()
             }
         }
 
-        if (viewModel.news.value.isNullOrEmpty()) {
+        PreferencesManager.preferencesChanged.observe(viewLifecycleOwner) { timestamp ->
+            if (timestamp > viewModel.lastPreferencesTimestamp) {
+                viewModel.lastPreferencesTimestamp = timestamp
+                if (NetworkUtils.isOnline(requireContext())) {
+                    viewModel.fetchNews()
+                } else {
+                    android.widget.Toast.makeText(requireContext(), getString(R.string.offline_gate_title), android.widget.Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        if (viewModel.news.value.isNullOrEmpty() && viewModel.lastPreferencesTimestamp == 0L) {
             if (NetworkUtils.isOnline(requireContext())) {
+                viewModel.lastPreferencesTimestamp = System.currentTimeMillis() // Marcar como leido inicial
                 viewModel.fetchNews()
             } else {
                 android.widget.Toast.makeText(requireContext(), getString(R.string.offline_gate_title), android.widget.Toast.LENGTH_LONG).show()

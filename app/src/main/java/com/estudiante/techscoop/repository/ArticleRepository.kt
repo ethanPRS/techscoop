@@ -52,19 +52,38 @@ class ArticleRepository {
                     )
                 }
 
-                val query = PreferencesManager.getCategory()
+                val rawCategory = PreferencesManager.getCategory()
                 val language = PreferencesManager.getLanguage()
                 val sortBy = PreferencesManager.getSortBy()
 
-                val response = api.searchEverything(
-                    query = query,
-                    sources = null,
-                    language = if (language.isEmpty()) null else language,
-                    sortBy = sortBy,
-                    from = null,
-                    to = null,
-                    apiKey = apiKey
-                )
+                val response = if (language == "es") {
+                    // NewsAPI free tier no longer supports Spanish in top-headlines. 
+                    // We must fallback to searchEverything with a translated category.
+                    val query = when (rawCategory) {
+                        "business" -> "negocios OR finanzas"
+                        "sports" -> "deportes"
+                        "entertainment" -> "entretenimiento OR cine"
+                        "general" -> "noticias"
+                        "science" -> "ciencia"
+                        "health" -> "salud OR medicina"
+                        else -> "tecnología"
+                    }
+                    api.searchEverything(
+                        query = query,
+                        sources = null,
+                        language = "es",
+                        sortBy = "relevancy", // Force relevancy for category fallbacks to ensure quality
+                        from = null,
+                        to = null,
+                        apiKey = apiKey
+                    )
+                } else {
+                    api.getTopHeadlines(
+                        category = rawCategory,
+                        language = "en",
+                        apiKey = apiKey
+                    )
+                }
 
                 if (response.isSuccessful) {
                     val articles = response.body()?.articles ?: emptyList()

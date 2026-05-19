@@ -15,6 +15,7 @@ class NewsViewModel : ViewModel() {
     val news = MutableLiveData<List<DataArticle>>()
     val error = MutableLiveData<String?>()
     val loading = MutableLiveData<Boolean>()
+    var lastPreferencesTimestamp: Long = 0
 
     fun fetchNews() {
         viewModelScope.launch {

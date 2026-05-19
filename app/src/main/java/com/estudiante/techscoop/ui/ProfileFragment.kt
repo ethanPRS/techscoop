@@ -131,6 +131,26 @@ class ProfileFragment : Fragment() {
         binding.spinnerCategory.setSelection(categoriesApi.indexOf(PreferencesManager.getCategory()).takeIf { it >= 0 } ?: 0)
         binding.spinnerLanguage.setSelection(languagesApi.indexOf(PreferencesManager.getLanguage()).takeIf { it >= 0 } ?: 0)
         binding.spinnerSortBy.setSelection(sortApi.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
+
+        val spinnerListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedCatIndex = binding.spinnerCategory.selectedItemPosition
+                val selectedLangIndex = binding.spinnerLanguage.selectedItemPosition
+                val selectedSortIndex = binding.spinnerSortBy.selectedItemPosition
+
+                PreferencesManager.savePreferences(
+                    language = languagesApi.getOrElse(selectedLangIndex) { "en" },
+                    category = categoriesApi.getOrElse(selectedCatIndex) { "technology" },
+                    sortBy = sortApi.getOrElse(selectedSortIndex) { "publishedAt" }
+                )
+            }
+
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        binding.spinnerCategory.onItemSelectedListener = spinnerListener
+        binding.spinnerLanguage.onItemSelectedListener = spinnerListener
+        binding.spinnerSortBy.onItemSelectedListener = spinnerListener
     }
 
     // ─────────────────────────── Observers ───────────────────────────────────
@@ -189,15 +209,8 @@ class ProfileFragment : Fragment() {
                 pass = binding.etPassword.text.toString(),
                 uri = currentImageUri?.toString()
             )
-            val selectedCatIndex = binding.spinnerCategory.selectedItemPosition
-            val selectedLangIndex = binding.spinnerLanguage.selectedItemPosition
-            val selectedSortIndex = binding.spinnerSortBy.selectedItemPosition
+            // Preferences are now saved automatically via the OnItemSelectedListener
 
-            PreferencesManager.savePreferences(
-                language = languagesApi.getOrElse(selectedLangIndex) { "en" },
-                category = categoriesApi.getOrElse(selectedCatIndex) { "technology" },
-                sortBy = sortApi.getOrElse(selectedSortIndex) { "publishedAt" }
-            )
             Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
 
             // Switch back to read-only mode after saving
