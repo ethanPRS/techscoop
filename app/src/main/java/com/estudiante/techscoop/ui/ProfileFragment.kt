@@ -1,4 +1,4 @@
-package com.estudiante.techscoop.ui
+﻿package com.estudiante.techscoop.ui
 
 import android.Manifest
 import android.content.Intent
@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.estudiante.techscoop.data.PreferencesManager
 import com.estudiante.techscoop.data.SessionManager
 import com.estudiante.techscoop.databinding.FragmentProfileBinding
+// Integración con cierre de sesión Firebase/Google (añadido al flujo de perfil).
 import com.estudiante.techscoop.repository.AuthRepository
 import com.estudiante.techscoop.viewmodel.ProfileViewModel
 import java.io.File
@@ -251,6 +252,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Cierra Firebase y Google, limpia datos locales y regresa a LoginActivity.
     private fun signOutAndGoToLogin() {
         viewLifecycleOwner.lifecycleScope.launch {
             AuthRepository.signOut(requireContext().applicationContext)
@@ -283,9 +285,7 @@ class ProfileFragment : Fragment() {
         return File.createTempFile("PROFILE_$timeStamp", ".jpg", storageDir)
     }
 
-    private fun navigateToLogin() {
-        SessionManager.logoutUser()
-        val intent = Intent(requireContext(), LoginActivity::class.java)
+    private fun navigateToLogin() {        val intent = Intent(requireContext(), LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         activity?.finish()

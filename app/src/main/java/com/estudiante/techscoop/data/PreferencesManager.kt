@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
+// Preferencias de noticias por usuario (idioma, categoría, orden). Requiere init() en TechScoopApp.
 object PreferencesManager {
     private const val PREFS_NAME = "techscoop_user_prefs"
     
@@ -21,10 +22,7 @@ object PreferencesManager {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
-    // Default values
-    // language: "es" (español), "en" (inglés), "" (todos)
-    // category: "technology", "business", "sports", "entertainment", "general"
-    // sortBy: "publishedAt", "relevancy", "popularity"
+    // Valores por defecto: language "es"|"en", category technology|business|..., sortBy publishedAt|relevancy|popularity
 
     fun savePreferences(language: String, category: String, sortBy: String) {
         val userEmail = SessionManager.getCurrentUserEmail() ?: "default"

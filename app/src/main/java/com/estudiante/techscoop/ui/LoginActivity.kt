@@ -1,6 +1,5 @@
 package com.estudiante.techscoop.ui
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.SessionManager
+import com.estudiante.techscoop.data.SessionManager as AppSessionManager
 import com.estudiante.techscoop.repository.AuthRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -22,8 +22,10 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// Pantalla inicial (LAUNCHER): login email, Google Sign-In y enlaces a registro/recuperar.
 class LoginActivity : AppCompatActivity() {
 
+    // Recibe el resultado del intent de Google y extrae el idToken para Firebase.
     private val googleLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -54,6 +56,14 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Si Firebase ya tiene sesión, entra directo a MainActivity.
+        if (SessionManager.isLoggedIn()) {
+            com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.email?.let {
+                AppSessionManager.loginUser(it)
+            }
+            goToMain()
+            return
+        }
         setContentView(R.layout.login_activity)
         val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
         val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
@@ -63,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
             etEmail.setText(savedEmail)
         }
 
+        // Login clásico: valida campos, autentica con Firebase y navega a MainActivity.
         btnLogin.setOnClickListener {
             val email = etEmail.text?.toString()?.trim().orEmpty()
             val password = etPassword.text?.toString().orEmpty()
@@ -75,8 +86,8 @@ class LoginActivity : AppCompatActivity() {
                     onSuccess = { user ->
                         val name = user.displayName ?: email.substringBefore("@")
                         AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
-                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                        com.estudiante.techscoop.data.SessionManager.loginUser(email)
+                        SessionManager.saveLastEmail(this@LoginActivity, email)
+                        AppSessionManager.loginUser(email)
                         goToMain()
                     },
                     onFailure = { e ->
@@ -103,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Configura GoogleSignInOptions con el Web Client ID de google-services.json.
     private fun startGoogleSignIn() {
         val playServices = GoogleApiAvailability.getInstance()
         val status = playServices.isGooglePlayServicesAvailable(this)
@@ -126,6 +138,7 @@ class LoginActivity : AppCompatActivity() {
         googleLauncher.launch(GoogleSignIn.getClient(this, gso).signInIntent)
     }
 
+    // Intercambia el idToken de Google por una sesión de Firebase Auth.
     private fun signInWithGoogle(idToken: String, email: String?, displayName: String?) {
         lifecycleScope.launch {
             try {
@@ -136,8 +149,8 @@ class LoginActivity : AppCompatActivity() {
                 val mail = user.email ?: email.orEmpty()
                 val name = user.displayName ?: displayName.orEmpty()
                 AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
-                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                com.estudiante.techscoop.data.SessionManager.loginUser(mail)
+                SessionManager.saveLastEmail(this@LoginActivity, mail)
+                if (mail.isNotBlank()) AppSessionManager.loginUser(mail)
                 goToMain()
             } catch (e: Exception) {
                 Toast.makeText(
@@ -149,6 +162,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    // Entra a la app principal y limpia el back stack para no volver al login con Atrás.
     private fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

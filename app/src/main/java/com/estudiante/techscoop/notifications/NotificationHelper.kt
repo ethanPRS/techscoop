@@ -5,16 +5,19 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.ui.MainActivity
 
+// Crea canales Android 8+ y muestra notificaciones con tap hacia MainActivity.
 object NotificationHelper {
 
     private const val CHANNEL_NEWS = "techscoop_news"
     private const val CHANNEL_REMINDER = "techscoop_reminder"
 
+    // Canales separados: noticias nuevas vs recordatorio de uso.
     fun createChannels(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -34,6 +37,7 @@ object NotificationHelper {
         )
     }
 
+    // Notificación cuando detectamos un titular distinto al anterior.
     fun showNews(context: Context, body: String) {
         notify(
             context,
@@ -44,6 +48,7 @@ object NotificationHelper {
         )
     }
 
+    // Notificación de recordatorio periódico.
     fun showReminder(context: Context) {
         notify(
             context,
@@ -63,8 +68,10 @@ object NotificationHelper {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        val largeIcon = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         val notification = NotificationCompat.Builder(context, channel)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_stat_notif)
+            .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setContentIntent(pi)
