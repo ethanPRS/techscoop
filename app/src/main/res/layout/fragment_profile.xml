@@ -54,7 +54,7 @@
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/ic_launcher_foreground"
-                            android:contentDescription="Avatar de usuario" />
+                            android:contentDescription="User avatar" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <!-- Camera / Gallery buttons (only visible in edit mode) -->
@@ -71,7 +71,7 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cámara"
+                            android:text="Camera"
                             android:textSize="13sp"
                             android:textColor="#3F51B5"
                             app:strokeColor="#3F51B5"
@@ -82,7 +82,7 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Galería"
+                            android:text="Gallery"
                             android:textSize="13sp"
                             android:textColor="#3F51B5"
                             app:strokeColor="#3F51B5"/>
@@ -120,7 +120,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Información Personal"
+                            android:text="Personal Information"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="#1A1A2E"/>
@@ -290,7 +290,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- ═══════════════════════════════════════════ -->
-            <!-- Card 3: Preferencias de Noticias            -->
+            <!-- Card 3: News Preferences                    -->
             <!-- ═══════════════════════════════════════════ -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -310,7 +310,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preferencias de Noticias"
+                        android:text="News Preferences"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#1A1A2E"
@@ -319,7 +319,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Categoría Principal"
+                        android:text="Main Category"
                         android:textSize="12sp"
                         android:textColor="#888888"
                         android:layout_marginBottom="4dp"/>
@@ -332,7 +332,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Idioma"
+                        android:text="Language"
                         android:textSize="12sp"
                         android:textColor="#888888"
                         android:layout_marginBottom="4dp"/>
@@ -345,7 +345,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ordenar por"
+                        android:text="Sort By"
                         android:textSize="12sp"
                         android:textColor="#888888"
                         android:layout_marginBottom="4dp"/>

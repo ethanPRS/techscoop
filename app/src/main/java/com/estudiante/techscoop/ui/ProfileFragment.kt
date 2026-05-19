@@ -37,10 +37,10 @@ class ProfileFragment : Fragment() {
     private val categoriesDisplay = arrayOf("Technology", "Business", "Sports", "Entertainment", "General", "Science", "Health")
     private val categoriesApi = arrayOf("technology", "business", "sports", "entertainment", "general", "science", "health")
 
-    private val languagesDisplay = arrayOf("Inglés", "Español")
+    private val languagesDisplay = arrayOf("English", "Spanish")
     private val languagesApi = arrayOf("en", "es")
 
-    private val sortDisplay = arrayOf("Por fecha", "Relevancia", "Popularidad")
+    private val sortDisplay = arrayOf("By Date", "Relevance", "Popularity")
     private val sortApi = arrayOf("publishedAt", "relevancy", "popularity")
 
     private var latestPhotoFile: File? = null
@@ -53,7 +53,7 @@ class ProfileFragment : Fragment() {
         if (granted) {
             launchCamera()
         } else {
-            Toast.makeText(requireContext(), "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -163,7 +163,7 @@ class ProfileFragment : Fragment() {
                 }
 
                 if (it.status == "inactivo") {
-                    Toast.makeText(requireContext(), "Tu cuenta está inactiva", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Your account is inactive", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -198,7 +198,7 @@ class ProfileFragment : Fragment() {
                 category = categoriesApi.getOrElse(selectedCatIndex) { "technology" },
                 sortBy = sortApi.getOrElse(selectedSortIndex) { "publishedAt" }
             )
-            Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
 
             // Switch back to read-only mode after saving
             setEditMode(false)
@@ -206,13 +206,13 @@ class ProfileFragment : Fragment() {
 
         binding.btnDeactivate.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Desactivar Cuenta")
-                .setMessage("Tu cuenta quedará inactiva y se eliminará en un mes. ¿Continuar?")
-                .setPositiveButton("Desactivar") { _, _ ->
+                .setTitle("Deactivate Account")
+                .setMessage("Your account will become inactive and be deleted in one month. Continue?")
+                .setPositiveButton("Deactivate") { _, _ ->
                     viewModel.deactivateAccount()
                     signOutAndGoToLogin()
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton("Cancel", null)
                 .show()
         }
 
@@ -230,10 +230,10 @@ class ProfileFragment : Fragment() {
 
         binding.btnLogout.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Cerrar sesión")
-                .setMessage("¿Seguro que quieres cerrar sesión?")
-                .setPositiveButton("Sí") { _, _ -> signOutAndGoToLogin() }
-                .setNegativeButton("Cancelar", null)
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes") { _, _ -> signOutAndGoToLogin() }
+                .setNegativeButton("Cancel", null)
                 .show()
         }
     }

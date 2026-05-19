@@ -16,14 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             
-            <!-- Imagen del artículo -->
+            <!-- Article image -->
             <ImageView
                 android:id="@+id/ivArticleImage"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
                 android:background="#EEEEEE"
-                android:contentDescription="Imagen del artículo" />
+                android:contentDescription="Article image" />
 
             <ImageView
                 android:id="@+id/ivFavorite"
@@ -35,7 +35,7 @@
                 android:padding="6dp"
                 android:background="@drawable/circle_bg"
                 android:src="@drawable/ic_heart_outline"
-                android:contentDescription="Añadir a favoritos" />
+                android:contentDescription="Add to favorites" />
         </FrameLayout>
 
         <LinearLayout

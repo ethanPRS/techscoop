@@ -16,7 +16,6 @@ import com.estudiante.techscoop.databinding.FragmentBusquedaBinding
 import com.estudiante.techscoop.model.SearchFilters
 import com.estudiante.techscoop.viewmodel.NewsViewModel
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -30,6 +29,61 @@ class SearchFragment : Fragment() {
     private val viewModel: NewsViewModel by viewModels()
     private lateinit var adapter: ArticleTestAdapter
 
+    // ─────────────── Filter state ───────────────
+
+    /** Source filter: null = all sources */
+    private var selectedSource: FilterOption = sourceOptions[0]
+
+    /** Sort filter */
+    private var selectedSort: FilterOption = sortOptions[0]
+
+    /** Period filter: days back (0 = any) */
+    private var selectedPeriod: FilterOption = periodOptions[0]
+
+    /** Language filter */
+    private var selectedLanguage: FilterOption = languageOptions[0]
+
+    // ─────────────── Filter definitions ───────────────
+
+    data class FilterOption(val label: String, val value: String?)
+
+    companion object {
+        val sourceOptions = listOf(
+            FilterOption("All Sources", null),
+            FilterOption("TechCrunch", "techcrunch"),
+            FilterOption("The Verge", "the-verge"),
+            FilterOption("Ars Technica", "ars-technica"),
+            FilterOption("Wired", "wired"),
+            FilterOption("Engadget", "engadget"),
+            FilterOption("Hacker News", "hacker-news"),
+            FilterOption("BBC News", "bbc-news")
+        )
+
+        val sortOptions = listOf(
+            FilterOption("Most Recent", "publishedAt"),
+            FilterOption("Relevance", "relevancy"),
+            FilterOption("Popularity", "popularity")
+        )
+
+        val periodOptions = listOf(
+            FilterOption("Any Time", "0"),
+            FilterOption("Last 24 Hours", "1"),
+            FilterOption("Last 3 Days", "3"),
+            FilterOption("Last Week", "7"),
+            FilterOption("Last Month", "30")
+        )
+
+        val languageOptions = listOf(
+            FilterOption("English", "en"),
+            FilterOption("Spanish", "es"),
+            FilterOption("French", "fr"),
+            FilterOption("German", "de"),
+            FilterOption("Portuguese", "pt")
+        )
+    }
+
+    // ─────────────── Lifecycle ───────────────
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,14 +95,15 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, bundle: Bundle?) {
         super.onViewCreated(view, bundle)
-
         setupRecyclerView()
+        setupFilterChips()
         setupListeners()
         setupObservers()
     }
 
+    // ─────────────── RecyclerView ───────────────
+
     private fun setupRecyclerView() {
-        // Corregido: Se añade el click listener que ArticleTestAdapter ahora requiere
         adapter = ArticleTestAdapter(emptyList()) { article ->
             val fragment = ArticleDetailFragment().apply {
                 arguments = Bundle().apply {
@@ -61,18 +116,94 @@ class SearchFragment : Fragment() {
                 setReorderingAllowed(true)
             }
         }
-        binding.rvResultados.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvResultados.adapter = adapter
+        binding.rvResults.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvResults.adapter = adapter
     }
 
-    private fun setupListeners() {
-        // Toggle de Filtros Colapsables
-        binding.layoutFiltrosHeader.setOnClickListener {
-            val isVisible = binding.layoutFiltrosContent.visibility == View.VISIBLE
-            binding.layoutFiltrosContent.visibility = if (isVisible) View.GONE else View.VISIBLE
-            binding.ivExpandIcon.rotation = if (isVisible) 0f else 180f
-        }
+    // ─────────────── Filter chip setup ───────────────
 
+    private fun setupFilterChips() {
+        binding.chipFilterSource.setOnClickListener { showFilterPopup(it, sourceOptions, selectedSource) { opt -> selectedSource = opt; updateChipAppearance(binding.chipFilterSource, opt, sourceOptions[0]) } }
+        binding.chipFilterSort.setOnClickListener { showFilterPopup(it, sortOptions, selectedSort) { opt -> selectedSort = opt; updateChipAppearance(binding.chipFilterSort, opt, sortOptions[0]) } }
+        binding.chipFilterPeriod.setOnClickListener { showFilterPopup(it, periodOptions, selectedPeriod) { opt -> selectedPeriod = opt; updateChipAppearance(binding.chipFilterPeriod, opt, periodOptions[0]) } }
+        binding.chipFilterLanguage.setOnClickListener { showFilterPopup(it, languageOptions, selectedLanguage) { opt -> selectedLanguage = opt; updateChipAppearance(binding.chipFilterLanguage, opt, languageOptions[0]) } }
+
+        binding.chipClearFilters.setOnClickListener { resetFilters() }
+
+        // Initialize chip text
+        updateChipAppearance(binding.chipFilterSource, selectedSource, sourceOptions[0])
+        updateChipAppearance(binding.chipFilterSort, selectedSort, sortOptions[0])
+        updateChipAppearance(binding.chipFilterPeriod, selectedPeriod, periodOptions[0])
+        updateChipAppearance(binding.chipFilterLanguage, selectedLanguage, languageOptions[0])
+    }
+
+    private fun showFilterPopup(
+        anchor: View,
+        options: List<FilterOption>,
+        currentSelection: FilterOption,
+        onSelected: (FilterOption) -> Unit
+    ) {
+        val popup = android.widget.PopupMenu(requireContext(), anchor)
+        options.forEachIndexed { index, option ->
+            val item = popup.menu.add(0, index, index, option.label)
+            // Show a check mark on the currently selected item
+            if (option.value == currentSelection.value) {
+                item.isChecked = true
+            }
+        }
+        popup.menu.setGroupCheckable(0, true, true)
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            val selected = options[menuItem.itemId]
+            onSelected(selected)
+            updateClearButtonVisibility()
+            true
+        }
+        popup.show()
+    }
+
+    @Suppress("ResourceAsColor")
+    private fun updateChipAppearance(chip: Chip, selected: FilterOption, default: FilterOption) {
+        chip.text = selected.label
+        val isActive = selected.value != default.value
+        if (isActive) {
+            // Active state: filled indigo
+            chip.setChipBackgroundColorResource(android.R.color.transparent)
+            chip.chipBackgroundColor = android.content.res.ColorStateList.valueOf(0x1A3F51B5.toInt()) // 10% indigo
+            chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(0xFF3F51B5.toInt())
+            chip.setTextColor(0xFF3F51B5.toInt())
+        } else {
+            // Default state: outlined gray
+            chip.chipBackgroundColor = android.content.res.ColorStateList.valueOf(0xFFFFFFFF.toInt())
+            chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(0xFFDDDDDD.toInt())
+            chip.setTextColor(0xFF555555.toInt())
+        }
+    }
+
+    private fun updateClearButtonVisibility() {
+        val hasActiveFilter = selectedSource != sourceOptions[0]
+                || selectedSort != sortOptions[0]
+                || selectedPeriod != periodOptions[0]
+                || selectedLanguage != languageOptions[0]
+        binding.chipClearFilters.visibility = if (hasActiveFilter) View.VISIBLE else View.GONE
+    }
+
+    private fun resetFilters() {
+        selectedSource = sourceOptions[0]
+        selectedSort = sortOptions[0]
+        selectedPeriod = periodOptions[0]
+        selectedLanguage = languageOptions[0]
+
+        updateChipAppearance(binding.chipFilterSource, selectedSource, sourceOptions[0])
+        updateChipAppearance(binding.chipFilterSort, selectedSort, sortOptions[0])
+        updateChipAppearance(binding.chipFilterPeriod, selectedPeriod, periodOptions[0])
+        updateChipAppearance(binding.chipFilterLanguage, selectedLanguage, languageOptions[0])
+        updateClearButtonVisibility()
+    }
+
+    // ─────────────── Search listeners ───────────────
+
+    private fun setupListeners() {
         binding.etQuery.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyboard()
@@ -81,68 +212,65 @@ class SearchFragment : Fragment() {
             } else false
         }
 
-        binding.btnBuscar.setOnClickListener {
+        binding.btnSearch.setOnClickListener {
             hideKeyboard()
             doSearch()
         }
     }
 
+    // ─────────────── Observers ───────────────
+
     private fun setupObservers() {
         viewModel.loading.observe(viewLifecycleOwner) { isLoading ->
-            binding.progressBusqueda.visibility = if (isLoading) View.VISIBLE else View.GONE
-            binding.btnBuscar.isEnabled = !isLoading
+            binding.progressSearch.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.btnSearch.isEnabled = !isLoading
         }
 
         viewModel.error.observe(viewLifecycleOwner) { msg ->
             if (msg != null) {
-                binding.tvBusquedaStatus.text = "❌ $msg"
+                binding.tvSearchStatus.text = "❌ $msg"
             }
         }
 
         viewModel.news.observe(viewLifecycleOwner) { articles ->
             if (articles.isNullOrEmpty()) {
                 if (viewModel.error.value == null) {
-                    binding.tvBusquedaStatus.text = "Sin resultados"
+                    binding.tvSearchStatus.text = "No results found"
                 }
                 adapter.updateData(emptyList())
             } else {
-                binding.tvBusquedaStatus.text = "✅ ${articles.size} resultados"
+                val query = binding.etQuery.text?.toString().orEmpty().trim()
+                binding.tvSearchStatus.text = "✅ ${articles.size} results for \"$query\""
                 adapter.updateData(articles)
             }
         }
     }
 
+    // ─────────────── Search execution ───────────────
+
     private fun doSearch() {
         val query = binding.etQuery.text?.toString().orEmpty().trim()
         if (query.isBlank()) {
-            binding.tvBusquedaStatus.text = "Escribe palabras clave para buscar"
+            binding.tvSearchStatus.text = "Enter keywords to search"
             return
         }
 
-        val source = selectedTag(binding.cgSources)
-        val language = selectedTag(binding.cgLanguage) ?: "en"
-        val sortBy = selectedTag(binding.cgSort) ?: "publishedAt"
-        val days = selectedTag(binding.cgPeriod)?.toIntOrNull() ?: 0
+        val days = selectedPeriod.value?.toIntOrNull() ?: 0
         val from = if (days > 0) isoDateDaysAgo(days) else null
 
         viewModel.search(
             SearchFilters(
                 query = query,
-                sources = source,
-                language = language,
-                sortBy = sortBy,
+                sources = selectedSource.value,
+                language = selectedLanguage.value,
+                sortBy = selectedSort.value,
                 from = from,
                 to = null
             )
         )
     }
 
-    private fun selectedTag(group: ChipGroup): String? {
-        val id = group.checkedChipId
-        if (id == View.NO_ID) return null
-        val chip = group.findViewById<Chip>(id) ?: return null
-        return chip.tag?.toString()
-    }
+    // ─────────────── Helpers ───────────────
 
     private fun isoDateDaysAgo(days: Int): String {
         val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))

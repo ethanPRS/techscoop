@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/action_search"
-        android:title="Buscar"
+        android:title="Search"
         android:icon="@drawable/ic_search"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_perfil"
-        android:title="Perfil"
+        android:title="Profile"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_cerrar_sesion"
-        android:title="Cerrar Sesión"
+        android:title="Log Out"
         app:showAsAction="never" />
 
 </menu>
