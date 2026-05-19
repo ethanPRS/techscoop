@@ -1,4 +1,4 @@
-package com.estudiante.techscoop.ui
+﻿package com.estudiante.techscoop.ui
 
 import android.os.Bundle
 import android.widget.Button
@@ -11,6 +11,7 @@ import com.estudiante.techscoop.repository.AuthRepository
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 
+// Pantalla para solicitar el correo de restablecimiento de contraseña (Firebase).
 class ForgotPasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,6 +20,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
 
+                // Envía el email de reset; muestra mensaje de éxito o error de red.
         findViewById<Button>(R.id.btnSendReset).setOnClickListener {
             val email = etEmail.text?.toString().orEmpty().trim()
             if (email.isEmpty()) {
@@ -45,4 +47,5 @@ class ForgotPasswordActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvBackLogin).setOnClickListener { finish() }
     }
 }
+
 

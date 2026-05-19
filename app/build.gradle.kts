@@ -1,11 +1,10 @@
-import java.util.Properties
+﻿import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.gradle)
-    // Plugin de Google Services: lee google-services.json y expone default_web_client_id.
     id("com.google.gms.google-services")
 }
 
@@ -21,7 +20,6 @@ fun readNewsApiKey(): String {
 
 val newsApiKey: String = readNewsApiKey()
 
-// Carga credenciales del keystore compartido del equipo (mismo SHA-1 para Google en debug).
 fun loadTeamKeystoreProperties(): Properties {
     val props = Properties()
     val file = file("team-keystore.properties")
@@ -38,7 +36,6 @@ android {
     compileSdk = 35
 
     signingConfigs {
-        // Firma debug unificada: todos los desarrolladores generan el mismo certificado.
         create("teamDebug") {
             val storeFileName = teamKeystoreProps.getProperty("storeFile", "team-debug.keystore")
             storeFile = file(storeFileName)
@@ -60,7 +57,6 @@ android {
 
     buildTypes {
         debug {
-            // Builds debug firmados con team-debug.keystore para Google Sign-In en equipo.
             signingConfig = signingConfigs.getByName("teamDebug")
         }
         release {
@@ -104,7 +100,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    // Dependencias de Firebase Authentication y Google Sign-In.
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.android.gms:play-services-auth:21.3.0")

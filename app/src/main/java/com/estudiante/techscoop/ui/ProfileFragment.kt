@@ -291,7 +291,8 @@ class ProfileFragment : Fragment() {
         return File.createTempFile("PROFILE_$timeStamp", ".jpg", storageDir)
     }
 
-    private fun navigateToLogin() {        val intent = Intent(requireContext(), LoginActivity::class.java)
+    private fun navigateToLogin() {
+        val intent = Intent(requireContext(), LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         activity?.finish()
@@ -302,3 +303,4 @@ class ProfileFragment : Fragment() {
         _binding = null
     }
 }
+

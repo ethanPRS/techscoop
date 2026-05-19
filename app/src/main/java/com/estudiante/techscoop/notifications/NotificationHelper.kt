@@ -1,11 +1,10 @@
-package com.estudiante.techscoop.notifications
+﻿package com.estudiante.techscoop.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.estudiante.techscoop.R
@@ -17,7 +16,7 @@ object NotificationHelper {
     private const val CHANNEL_NEWS = "techscoop_news"
     private const val CHANNEL_REMINDER = "techscoop_reminder"
 
-    // Canales separados: noticias nuevas vs recordatorio de uso.
+        // Canales separados: noticias nuevas vs recordatorio de uso.
     fun createChannels(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val nm = context.getSystemService(NotificationManager::class.java)
@@ -37,7 +36,7 @@ object NotificationHelper {
         )
     }
 
-    // Notificación cuando detectamos un titular distinto al anterior.
+        // Notificación cuando detectamos un titular distinto al anterior.
     fun showNews(context: Context, body: String) {
         notify(
             context,
@@ -48,7 +47,7 @@ object NotificationHelper {
         )
     }
 
-    // Notificación de recordatorio periódico.
+        // Notificación de recordatorio periódico.
     fun showReminder(context: Context) {
         notify(
             context,
@@ -68,10 +67,8 @@ object NotificationHelper {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val largeIcon = BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher)
         val notification = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_stat_notif)
-            .setLargeIcon(largeIcon)
             .setContentTitle(title)
             .setContentText(body)
             .setContentIntent(pi)
@@ -80,3 +77,4 @@ object NotificationHelper {
         context.getSystemService(NotificationManager::class.java).notify(id, notification)
     }
 }
+
