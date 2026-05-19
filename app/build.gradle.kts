@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.google.services)
 }
 
 val apiKey: String = project.findProperty("NEWS_API_KEY") as String? ?: ""
@@ -11,7 +12,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.estudiante.techscoop"
+        applicationId = "com.juanpabloramos.techscoop"
         minSdk = 24
         targetSdk = 35
 
@@ -85,4 +86,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // --- Firebase & Auth ---
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 }

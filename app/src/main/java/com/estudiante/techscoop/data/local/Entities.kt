@@ -10,8 +10,9 @@ data class UserEntity(
     val email: String,
     val password: String,
     val bio: String? = null,
-    val status: String,
-    val profileImageUri: String? = null
+    val status: String = "activo", // solo "activo" o "inactivo"
+    val profileImageUri: String? = null,
+    val deactivationDate: Long? = null // para llevar el conteo del mes (la paso de un mes se borra la cuenta si esta inactivo)
 )
 
 @Entity(tableName = "feed_preferences")
