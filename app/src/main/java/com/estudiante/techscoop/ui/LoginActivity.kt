@@ -1,5 +1,7 @@
 package com.estudiante.techscoop.ui
 
+import com.estudiante.techscoop.data.SessionManager
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -74,7 +76,8 @@ class LoginActivity : AppCompatActivity() {
                     onSuccess = { user ->
                         val name = user.displayName ?: email.substringBefore("@")
                         AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
-                        SessionManager.saveLastEmail(this@LoginActivity, email)
+                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                        com.estudiante.techscoop.data.SessionManager.loginUser(email)
                         goToMain()
                     },
                     onFailure = { e ->
@@ -134,7 +137,8 @@ class LoginActivity : AppCompatActivity() {
                 val mail = user.email ?: email.orEmpty()
                 val name = user.displayName ?: displayName.orEmpty()
                 AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
-                SessionManager.saveLastEmail(this@LoginActivity, mail)
+                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                com.estudiante.techscoop.data.SessionManager.loginUser(mail)
                 goToMain()
             } catch (e: Exception) {
                 Toast.makeText(

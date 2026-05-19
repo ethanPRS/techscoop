@@ -1,6 +1,7 @@
 package com.estudiante.techscoop.repository
 
 import com.estudiante.techscoop.BuildConfig
+import com.estudiante.techscoop.data.PreferencesManager
 import com.estudiante.techscoop.data.remote.APIService
 import com.estudiante.techscoop.model.Articles
 import com.estudiante.techscoop.model.DataArticle
@@ -51,8 +52,17 @@ class ArticleRepository {
                     )
                 }
 
-                val response = api.getTopHeadlines(
-                    source = "techcrunch",
+                val query = PreferencesManager.getCategory()
+                val language = PreferencesManager.getLanguage()
+                val sortBy = PreferencesManager.getSortBy()
+
+                val response = api.searchEverything(
+                    query = query,
+                    sources = null,
+                    language = if (language.isEmpty()) null else language,
+                    sortBy = sortBy,
+                    from = null,
+                    to = null,
                     apiKey = apiKey
                 )
 

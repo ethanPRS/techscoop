@@ -172,6 +172,74 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preferencias de Noticias"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:layout_marginBottom="16dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Categoría Principal"
+                        android:textSize="12sp"
+                        android:textColor="#888888"
+                        android:layout_marginBottom="4dp"/>
+                    <Spinner
+                        android:id="@+id/spinnerCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@android:drawable/btn_dropdown"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Idioma"
+                        android:textSize="12sp"
+                        android:textColor="#888888"
+                        android:layout_marginBottom="4dp"/>
+                    <Spinner
+                        android:id="@+id/spinnerLanguage"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@android:drawable/btn_dropdown"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ordenar por"
+                        android:textSize="12sp"
+                        android:textColor="#888888"
+                        android:layout_marginBottom="4dp"/>
+                    <Spinner
+                        android:id="@+id/spinnerSortBy"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@android:drawable/btn_dropdown"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"

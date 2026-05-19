@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.estudiante.techscoop.R
+import com.estudiante.techscoop.data.FavoritesManager
 import com.estudiante.techscoop.model.DataArticle
 
 class ArticleTestAdapter(
@@ -22,6 +23,7 @@ class ArticleTestAdapter(
         val tvDescription: TextView = view.findViewById(R.id.tvDescription)
         val tvAuthor: TextView = view.findViewById(R.id.tvAuthor)
         val tvDate: TextView = view.findViewById(R.id.tvDate)
+        val ivFavorite: ImageView = view.findViewById(R.id.ivFavorite)
 
         init {
             view.setOnClickListener {
@@ -51,6 +53,20 @@ class ArticleTestAdapter(
             crossfade(true)
             placeholder(R.drawable.ic_placeholder)
             error(R.drawable.ic_placeholder)
+        }
+
+        // Configurar estado inicial del icono de corazón
+        val isFav = FavoritesManager.isFavorite(article)
+        holder.ivFavorite.setImageResource(
+            if (isFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+        )
+
+        // Manejar click en el icono de corazón
+        holder.ivFavorite.setOnClickListener {
+            val isNowFav = FavoritesManager.toggleFavorite(article)
+            holder.ivFavorite.setImageResource(
+                if (isNowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+            )
         }
     }
 

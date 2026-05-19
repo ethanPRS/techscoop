@@ -5,6 +5,8 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
+import com.estudiante.techscoop.data.PreferencesManager
+import com.estudiante.techscoop.data.SessionManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -33,6 +35,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        SessionManager.init(applicationContext)
+        PreferencesManager.init(applicationContext)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -115,6 +120,7 @@ class MainActivity : AppCompatActivity() {
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
                 R.id.nav_search -> SearchFragment()
+                R.id.nav_favorites -> FavoritesFragment()
                 R.id.nav_profile -> ProfileFragment()
                 else -> HomeFragment()
             }

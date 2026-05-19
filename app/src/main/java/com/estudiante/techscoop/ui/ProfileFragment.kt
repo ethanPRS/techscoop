@@ -16,6 +16,8 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.estudiante.techscoop.data.PreferencesManager
+import com.estudiante.techscoop.data.SessionManager
 import com.estudiante.techscoop.databinding.FragmentProfileBinding
 import com.estudiante.techscoop.repository.AuthRepository
 import com.estudiante.techscoop.viewmodel.ProfileViewModel
@@ -67,8 +69,31 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupPreferencesUI()
         setupObservers()
         setupListeners()
+    }
+
+    private fun setupPreferencesUI() {
+        val categories = arrayOf("technology", "business", "sports", "entertainment", "general", "science", "health")
+        val languages = arrayOf("en", "es", "fr", "de", "")
+        val sortOptions = arrayOf("publishedAt", "relevancy", "popularity")
+
+        val catAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerCategory.adapter = catAdapter
+
+        val langAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerLanguage.adapter = langAdapter
+
+        val sortAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortOptions)
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerSortBy.adapter = sortAdapter
+
+        binding.spinnerCategory.setSelection(categories.indexOf(PreferencesManager.getCategory()).takeIf { it >= 0 } ?: 0)
+        binding.spinnerLanguage.setSelection(languages.indexOf(PreferencesManager.getLanguage()).takeIf { it >= 0 } ?: 0)
+        binding.spinnerSortBy.setSelection(sortOptions.indexOf(PreferencesManager.getSortBy()).takeIf { it >= 0 } ?: 0)
     }
 
     private fun setupObservers() {
@@ -110,6 +135,11 @@ class ProfileFragment : Fragment() {
                 bio = binding.etBio.text.toString(),
                 pass = binding.etPassword.text.toString(),
                 uri = currentImageUri?.toString()
+            )
+            PreferencesManager.savePreferences(
+                language = binding.spinnerLanguage.selectedItem.toString(),
+                category = binding.spinnerCategory.selectedItem.toString(),
+                sortBy = binding.spinnerSortBy.selectedItem.toString()
             )
             Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show()
         }
@@ -181,6 +211,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun navigateToLogin() {
+        SessionManager.logoutUser()
         val intent = Intent(requireContext(), LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
