@@ -1,0 +1,22 @@
+## ──────────────────────────────────────────────────────────
+## local.properties — TEMPLATE
+## ──────────────────────────────────────────────────────────
+## Copy this file as "local.properties" and fill in YOUR values.
+## DO NOT commit local.properties to git.
+## ──────────────────────────────────────────────────────────
+
+## Android SDK path (required)
+## macOS example:   sdk.dir=/Users/<user>/Library/Android/sdk
+## Windows example: sdk.dir=C:\\Users\\<user>\\AppData\\Local\\Android\\Sdk
+## Linux example:   sdk.dir=/home/<user>/Android/Sdk
+sdk.dir=
+
+## News API key (get yours at https://newsapi.org)
+NEWS_API_KEY=
+
+## (Optional) Override the JDK used by Gradle.
+## Usually NOT needed — Android Studio's bundled JBR is used by default.
+## Only set this if you have a specific reason.
+## macOS example:   org.gradle.java.home=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home
+## Windows example: org.gradle.java.home=C:\\Program Files\\Android\\Android Studio\\jbr
+# org.gradle.java.home=

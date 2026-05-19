@@ -77,6 +77,12 @@ Thumbs.db
 .env
 .env.*
 
+# Firebase config (each dev uses their own Firebase project or shared config)
+# google-services.json  ← uncomment if each dev has their own Firebase project
+
+# Keystore passwords (the .keystore binary is kept, but NOT the passwords file)
+app/team-keystore.properties
+
 # =========================
 # 📊 Misc
 # =========================
