@@ -1,176 +1,116 @@
-# TechScoop
+# Guía de Compilación y Uso: TechScoop (macOS y Windows)
 
-Aplicación Android de noticias tecnológicas que consume la API de [NewsAPI](https://newsapi.org). Incluye pantalla de login, feed con imágenes, búsqueda con filtros (fuente, idioma, orden, periodo) y menú de perfil.
+Aplicación Android de noticias tecnológicas que consume la API de NewsAPI. Incluye pantalla de login con Firebase, feed reactivo con imágenes (Coil), favoritos guardados, búsqueda inteligente y preferencias de usuario que modifican la aplicación en tiempo real.
 
----
-
-## Requisitos previos
-
-Antes de empezar asegúrate de tener instalado:
-
-1. **Android Studio** Hedgehog o superior (probado con Ladybug / 2024.x).
-2. **JDK 17** (lo trae por defecto Android Studio).
-3. **Android SDK** con `compileSdk = 36` y `minSdk = 24`.
-4. Conexión a internet (la app llama a `https://newsapi.org`).
-5. Una **API Key gratuita** de NewsAPI: regístrate en <https://newsapi.org/register> y copia tu key.
+Esta guía detalla el proceso exacto, paso a paso, para clonar, configurar y compilar la aplicación **TechScoop** exitosamente, ya sea que utilices una computadora con **macOS** o **Windows**.
 
 ---
 
-## Compilación paso a paso (desde el ZIP)
+## 1. Requisitos Previos (Ambos Sistemas)
 
-### 1. Descomprimir el proyecto
+Antes de comenzar, asegúrate de tener instalados los siguientes programas:
 
-1. Descarga el archivo `TechScoop.zip`.
-2. Haz clic derecho y selecciona **Extraer aquí / Extract All**.
-3. Guarda la carpeta resultante en una ruta **sin espacios ni acentos**, por ejemplo:
-   - Windows: `C:\AndroidProjects\TechScoop`
-   - macOS / Linux: `~/AndroidStudioProjects/TechScoop`
+1. **Android Studio**: Descarga la última versión (Ladybug o superior) desde [developer.android.com/studio](https://developer.android.com/studio).
+2. **Git**: Para clonar el repositorio. (Descárgalo en [git-scm.com](https://git-scm.com/)).
+3. **JDK 17**: Por defecto ya viene incluido en las versiones recientes de Android Studio.
 
-### 2. Abrir el proyecto en Android Studio
+---
+
+## 2. Descargar el Proyecto
+
+Abre tu terminal (Terminal en macOS o Símbolo del Sistema / Git Bash en Windows) y ejecuta:
+
+```bash
+git clone https://github.com/ethanPRS/techscoop.git
+```
+
+Mueve la carpeta descargada a un directorio de trabajo seguro (evita carpetas con espacios o caracteres especiales en el nombre).
+
+---
+
+## 3. Configuración Inicial en Android Studio
 
 1. Abre **Android Studio**.
-2. Selecciona **File → Open...** (o **Open an Existing Project** desde la pantalla de bienvenida).
-3. Navega hasta la carpeta `TechScoop` descomprimida y dale **OK**.
-4. Espera a que termine el **Gradle Sync** (la barra de estado dice "Indexing..." / "Syncing...").
-   - Si aparece un aviso para instalar el Android SDK 36 o herramientas faltantes, acepta y deja que se descarguen.
+2. En la pantalla de bienvenida, selecciona **Open**.
+3. Navega hasta la carpeta `techscoop` que acabas de clonar y presiona **Open** / **OK**.
+4. Android Studio comenzará a descargar las dependencias de Gradle (esto puede tardar unos minutos). Verás una barra de carga en la parte inferior que dice *Syncing...*
 
-### 3. Configurar la API Key de NewsAPI
+---
 
-La app necesita tu API Key personal. Hay dos opciones:
+## 4. Configurar la API Key de Noticias y Firebase
 
-#### Opción A — Recomendada (en `gradle.properties`)
+Para que la aplicación funcione y compile correctamente, necesita conectarse a los servicios de noticias y de autenticación.
 
-1. En la raíz del proyecto abre el archivo **`gradle.properties`**.
-2. Añade (o reemplaza) esta línea al final:
-   ```properties
-   NEWS_API_KEY=TU_API_KEY_AQUI
-   ```
-3. Sustituye `TU_API_KEY_AQUI` por la key que copiaste desde NewsAPI.
-4. Guarda y vuelve a sincronizar (**File → Sync Project with Gradle Files**).
-
-#### Opción B — Variable de entorno
-
-Si prefieres no escribir la key en el archivo, define la variable `NEWS_API_KEY` en tu sistema operativo y reinicia Android Studio.
-
-> Sin esta key la app mostrará el error **"API Key no configurada"**.
-
-### 3.1 Google Sign-In (todo el equipo con el mismo SHA-1)
-
-No se puede poner el SHA-1 “en el código”: Google valida la **firma del APK**. El proyecto usa un **keystore compartido** en `app/team-debug.keystore` para que debug siempre tenga la misma huella.
-
-1. Clona el repo (incluye `team-debug.keystore` y `team-keystore.properties`).
-2. Compila en modo **debug** (Run en Android Studio); Gradle ya apunta a ese keystore.
-3. **Una vez**, quien tenga acceso a Firebase debe registrar el SHA-1 del equipo y bajar el `google-services.json` nuevo (ver **[docs/GOOGLE_SIGNIN_EQUIPO.md](docs/GOOGLE_SIGNIN_EQUIPO.md)**).
-
-SHA-1 a registrar en Firebase:
-
-`C3:0C:63:43:E8:0C:F7:1C:79:E6:2E:78:03:39:B5:C3:94:A9:8D:E9`
-
-### 4. Verificar `local.properties`
-
-El archivo `local.properties` se crea automáticamente al abrir el proyecto y apunta a tu SDK de Android. Si no existe, créalo en la raíz con:
+### Paso 4.1: Configurar la API Key (gradle.properties)
+1. En la raíz del proyecto abre el archivo **`gradle.properties`** (asegúrate de que sea el Global o el del Proyecto).
+2. Añade esta línea al final del archivo con la **clave real del proyecto**:
 
 ```properties
-sdk.dir=/ruta/a/tu/Android/Sdk
+NEWS_API_KEY=efbfd6ab4a48482bb78935d636f5b3f3
 ```
 
-- Windows ejemplo: `sdk.dir=C\:\\Users\\TU_USUARIO\\AppData\\Local\\Android\\Sdk`
-- macOS ejemplo: `sdk.dir=/Users/TU_USUARIO/Library/Android/sdk`
+### Paso 4.2: Archivo google-services.json (Firebase)
+El proyecto utiliza Firebase para el sistema de inicio de sesión de usuarios.
+1. Solicita a tu equipo el archivo **`google-services.json`** o descárgalo de la consola de Firebase del proyecto.
+2. Arrástralo y suéltalo directamente dentro de la carpeta `app/` de tu proyecto.
 
-### 5. Conectar un dispositivo o crear un emulador
-
-- **Emulador**: en Android Studio ve a **Device Manager → Create Device → Pixel 6** (o cualquiera con API 24+) y descarga la imagen del sistema.
-- **Dispositivo físico**: activa **Opciones de desarrollador** y **Depuración USB**, conéctalo por USB y autoriza el equipo.
-
-### 6. Compilar y ejecutar
-
-#### Desde Android Studio
-
-1. Selecciona el dispositivo en la barra superior.
-2. Pulsa el botón ▶ **Run 'app'** (o `Shift + F10`).
-3. Espera a que se instale el APK y se abra automáticamente.
-
-#### Desde la línea de comandos (opcional)
-
-Desde la carpeta del proyecto:
-
-- **Windows (PowerShell / CMD)**:
-  ```bash
-  gradlew.bat assembleDebug
-  ```
-- **macOS / Linux**:
-  ```bash
-  ./gradlew assembleDebug
-  ```
-
-El APK firmado en modo debug quedará en:
-```
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-Para instalarlo en un dispositivo conectado:
-```bash
-./gradlew installDebug
-```
+Una vez hechos estos dos pasos, haz clic en el ícono del "Elefantito" en la parte superior derecha de Android Studio que dice **Sync Project with Gradle Files**. La sincronización ahora debe terminar en verde (éxito).
 
 ---
 
-## Uso de la app
+## 5. Compilar y Ejecutar la Aplicación
 
-1. **Login** — escribe cualquier email y contraseña no vacíos y pulsa **Entrar**.
-2. **Feed principal** — al entrar se cargan automáticamente las últimas noticias de TechCrunch con su imagen.
-3. **Búsqueda** (icono de lupa en la toolbar) — busca por palabras clave y aplica filtros:
-   - Fuente: TechCrunch, The Verge, Wired, Ars Technica, Engadget, Hacker News.
-   - Idioma: Inglés / Español.
-   - Orden: Más recientes / Relevancia / Popularidad.
-   - Periodo: Cualquier fecha / 24h / Semana / Mes.
-4. **Menú overflow** (⋮ en la toolbar) → **Perfil** o **Cerrar Sesión**.
+Existen dos formas principales de compilar la aplicación: Usando la interfaz gráfica de Android Studio o usando la línea de comandos (Terminal).
 
----
+### Método A: Desde Android Studio (Recomendado)
 
-## Problemas comunes
+1. En la parte superior de Android Studio, busca el **Device Manager** (Administrador de Dispositivos).
+2. Crea un Emulador (ej. Pixel 6 con API 34+) e inícialo, o conecta tu teléfono físico mediante un cable USB (asegúrate de tener activada la Depuración USB en sus ajustes).
+3. Una vez que tu dispositivo aparezca seleccionado en el menú superior, presiona el botón verde de **Play (▶ Run 'app')** o usa el atajo:
+   - **macOS:** `Ctrl + R`
+   - **Windows:** `Shift + F10`
+4. Android Studio compilará el código e instalará la aplicación en tu dispositivo automáticamente.
 
-| Problema | Solución |
-| --- | --- |
-| `API Key no configurada` | Añade `NEWS_API_KEY=...` en `gradle.properties` y sincroniza. |
-| `SDK location not found` | Configura `sdk.dir` en `local.properties` o reinstala el SDK desde Android Studio. |
-| `Unsupported Java version` | Asegúrate de usar **JDK 17** (Settings → Build, Execution → Gradle → Gradle JDK). |
-| Las imágenes no cargan | Verifica que el dispositivo tiene internet y que la noticia tiene `urlToImage`. |
-| HTTP 426 / 429 desde NewsAPI | Plan gratuito limitado, espera unos minutos o usa otra key. |
-| `minSdk` muy alto | El emulador debe ejecutar Android 7.0 (API 24) o superior. |
+### Método B: Desde la Línea de Comandos (Terminal)
 
----
+Si prefieres compilar el archivo `.apk` manualmente sin abrir el editor, abre la terminal directamente dentro de la carpeta raíz del proyecto (`techscoop/`).
 
-## Estructura del proyecto
+#### 🍏 Instrucciones para macOS (o Linux)
 
-```
-app/src/main/
-├── AndroidManifest.xml
-├── java/com/estudiante/techscoop/
-│   ├── LoginActivity.kt        ← Pantalla inicial
-│   ├── MainActivity.kt         ← Feed principal con autocarga
-│   ├── BusquedaActivity.kt     ← Búsqueda con filtros
-│   ├── PerfilActivity.kt       ← Perfil del usuario
-│   ├── APIService.kt           ← Endpoints de NewsAPI
-│   ├── ArticleRepository.kt    ← Cliente Retrofit + lógica de red
-│   ├── ArticleViewModel.kt     ← LiveData (news, error, loading)
-│   ├── Article.kt              ← Modelos de datos
-│   └── SearchFilters.kt        ← Filtros de búsqueda
-└── res/
-    ├── layout/                 ← XML de cada pantalla
-    ├── menu/menu_main.xml      ← Menú de la toolbar
-    └── drawable/               ← Iconos (búsqueda, placeholder)
-```
+1. Primero, asegúrate de que el archivo ejecutable tenga permisos:
+   ```bash
+   chmod +x gradlew
+   ```
+2. Ejecuta el comando de compilación:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+3. Si el comando termina exitosamente (`BUILD SUCCESSFUL`), encontrarás el archivo de la aplicación (APK) listo para instalarse en la ruta:
+   `app/build/outputs/apk/debug/app-debug.apk`
+
+*Si tienes un dispositivo conectado, puedes compilar e instalar directamente en un solo paso con:* `./gradlew installDebug`
+
+#### 🪟 Instrucciones para Windows
+
+1. En Windows usaremos el archivo batch proporcionado por Gradle. En tu Símbolo del Sistema o PowerShell ejecuta:
+   ```cmd
+   gradlew.bat assembleDebug
+   ```
+2. Espera a que termine el proceso (`BUILD SUCCESSFUL`).
+3. El archivo de la aplicación se generará en:
+   `app\build\outputs\apk\debug\app-debug.apk`
+
+*Si tienes un dispositivo conectado, instala directamente con:* `gradlew.bat installDebug`
 
 ---
 
-## Stack técnico
+## 6. Solución a Errores Comunes de Compilación
 
-- **Kotlin** 2.0.21
-- **Retrofit** 2.11.0 + **Gson** — cliente HTTP y parseo JSON
-- **OkHttp** 4.12.0 — transporte HTTP y logging
-- **Coil** 2.6.0 — carga de imágenes
-- **Coroutines** + **ViewModel** + **LiveData**
-- **Hilt** 2.51.1 — DI (preparado)
-- **Material Components** 1.13.0
-- **ViewBinding** activado
+*   **Error:** `SDK location not found. Define location with sdk.dir in the local.properties file...`
+    *   **Solución:** Ve a `File > Project Structure > SDK Location` en Android Studio y verifica que la ruta de tu SDK esté bien configurada. En Windows usualmente es `C:\Users\TU_USUARIO\AppData\Local\Android\Sdk` y en macOS `/Users/TU_USUARIO/Library/Android/sdk`.
+*   **Error:** `Java 17 is required...`
+    *   **Solución:** Android Studio Ladybug trae Java 17/21 por defecto. Ve a `Android Studio > Settings > Build, Execution, Deployment > Build Tools > Gradle` y asegúrate de que el **Gradle JDK** esté apuntando a JDK 17 o superior.
+*   **Las noticias no cargan (Blank screen) o lanza error "API Key no configurada"**
+    *   **Solución:** Revisa que el Paso 4.1 esté correcto y que la línea `NEWS_API_KEY=efbfd6ab4a48482bb78935d636f5b3f3` esté en tu `gradle.properties`, luego presiona "Sync Project with Gradle Files".
+*   **Error de Firebase (`File google-services.json is missing`)**
+    *   **Solución:** Verifica que el archivo se llame exactamente `google-services.json` (sin números extras como `google-services(1).json`) y esté situado **dentro** de la carpeta `app`, no en la carpeta raíz.
