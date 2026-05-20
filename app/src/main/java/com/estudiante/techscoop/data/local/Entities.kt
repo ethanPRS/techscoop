@@ -22,3 +22,14 @@ data class FeedPreferenceEntity(
     val sortBy: String = "publishedAt",
     val lastSyncTimestamp: Long = 0L
 )
+
+@Entity(tableName = "favorite_articles")
+data class FavoriteEntity(
+    @PrimaryKey val url: String,
+    val userEmail: String,
+    val title: String?,
+    val description: String?,
+    val urlToImage: String?,
+    val sourceName: String?,
+    val publishedAt: String?
+)

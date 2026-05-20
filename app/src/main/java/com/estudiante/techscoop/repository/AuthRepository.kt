@@ -99,6 +99,7 @@ object AuthRepository {
         } catch (_: Exception) {
         }
         SessionManager.clear(context)
+        com.estudiante.techscoop.data.FavoritesManager.clearMemory()
         // Note: user profile data is intentionally kept in ROOM so it
         // persists across logout/login cycles for the same user.
         // syncUserToRoom() handles cleanup when a *different* user logs in.

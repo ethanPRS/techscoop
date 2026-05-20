@@ -1,4 +1,4 @@
-﻿package com.estudiante.techscoop.ui
+package com.estudiante.techscoop.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -39,6 +39,11 @@ class MainActivity : AppCompatActivity() {
 
         SessionManager.init(applicationContext)
         PreferencesManager.init(applicationContext)
+        
+        val email = SessionManager.getCurrentUserEmail()
+        if (email != null) {
+            com.estudiante.techscoop.data.FavoritesManager.init(applicationContext, email)
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
