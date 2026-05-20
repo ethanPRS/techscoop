@@ -1,14 +1,12 @@
 package com.estudiante.techscoop.ui
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.data.FavoritesManager
+import com.estudiante.techscoop.databinding.ItemArticleTestBinding
 import com.estudiante.techscoop.model.DataArticle
 
 /**
@@ -21,20 +19,12 @@ class ArticleTestAdapter(
 ) : RecyclerView.Adapter<ArticleTestAdapter.VH>() {
 
     /**
-     * Aquí conectamos las variables con los IDs del diseño XML.
+     * Aquí conectamos las variables usando ViewBinding directamente en el ViewHolder.
      */
-    inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-        val ivImage: ImageView = view.findViewById(R.id.ivArticleImage)
-        val tvSource: TextView = view.findViewById(R.id.tvSource)
-        val tvTitle: TextView = view.findViewById(R.id.tvArticleTitle)
-        val tvDescription: TextView = view.findViewById(R.id.tvDescription)
-        val tvAuthor: TextView = view.findViewById(R.id.tvAuthor)
-        val tvDate: TextView = view.findViewById(R.id.tvDate)
-        val ivFavorite: ImageView = view.findViewById(R.id.ivFavorite)
-
+    inner class VH(val binding: ItemArticleTestBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             // Configuramos qué pasa cuando el usuario toca toda la tarjeta de la noticia
-            view.setOnClickListener {
+            binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClick(articles[position])
@@ -45,12 +35,13 @@ class ArticleTestAdapter(
 
     /**
      * Este método se llama cuando el RecyclerView necesita crear una nueva celda visual.
-     * Solo crea las celdas necesarias para llenar la pantalla.
+     * Solo crea las celdas necesarias para llenar la pantalla usando ViewBinding.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_article_test, parent, false)
-        return VH(view)
+        val binding = ItemArticleTestBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return VH(binding)
     }
 
     /**
@@ -59,36 +50,38 @@ class ArticleTestAdapter(
      */
     override fun onBindViewHolder(holder: VH, position: Int) {
         val article = articles[position]
-        
-        // Asignamos los textos, usando un valor por defecto si vienen nulos
-        holder.tvSource.text = article.source?.name ?: "No Source Available"
-        holder.tvTitle.text = article.title ?: "No Title Available"
-        holder.tvDescription.text = article.description ?: "No Description Available"
-        holder.tvAuthor.text = "✍️ ${article.author ?: "Unkown"}"
-        holder.tvDate.text = article.publishedAt?.take(10) ?: "" // Muestra solo YYYY-MM-DD
 
-        // Cargamos la imagen de internet usando la librería Coil
-        holder.ivImage.load(article.urlToImage) {
-            crossfade(true) // Animación suave al cargar
-            placeholder(R.drawable.ic_placeholder) // Imagen mientras carga
-            error(R.drawable.ic_placeholder) // Imagen si falla la carga
-        }
+        // Usamos el bloque 'with' para evitar escribir 'holder.binding' en cada línea
+        with(holder.binding) {
+            // Asignamos los textos, usando un valor por defecto si vienen nulos
+            tvSource.text = article.source?.name ?: "No Source Available"
+            tvArticleTitle.text = article.title ?: "No Title Available"
+            tvDescription.text = article.description ?: "No Description Available"
+            tvAuthor.text = "✍️ ${article.author ?: "Unknown"}"
+            tvDate.text = article.publishedAt?.take(10) ?: "" // Muestra solo YYYY-MM-DD
 
+            // Cargamos la imagen de internet usando la librería Coil
+            ivArticleImage.load(article.urlToImage) {
+                crossfade(true) // Animación suave al cargar
+                placeholder(R.drawable.ic_placeholder) // Imagen mientras carga
+                error(R.drawable.ic_placeholder) // Imagen si falla la carga
+            }
 
-        // Verificamos si esta noticia ya es favorita al cargar la celda
-        val isFav = FavoritesManager.isFavorite(article)
-        holder.ivFavorite.setImageResource(
-            if (isFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
-        )
-
-        // Cuando el usuario toca el ícono del corazón
-        holder.ivFavorite.setOnClickListener {
-            // toggleFavorite la agrega o la quita de la lista y devuelve su nuevo estado
-            val isNowFav = FavoritesManager.toggleFavorite(article)
-            // Actualizamos el ícono visualmente (corazón lleno o vacío)
-            holder.ivFavorite.setImageResource(
-                if (isNowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+            // Verificamos si esta noticia ya es favorita al cargar la celda
+            val isFav = FavoritesManager.isFavorite(article)
+            ivFavorite.setImageResource(
+                if (isFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
             )
+
+            // Cuando el usuario toca el ícono del corazón
+            ivFavorite.setOnClickListener {
+                // toggleFavorite la agrega o la quita de la lista y devuelve su nuevo estado
+                val isNowFav = FavoritesManager.toggleFavorite(article)
+                // Actualizamos el ícono visualmente (corazón lleno o vacío)
+                ivFavorite.setImageResource(
+                    if (isNowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline
+                )
+            }
         }
     }
 

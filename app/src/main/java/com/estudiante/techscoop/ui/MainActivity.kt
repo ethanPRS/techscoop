@@ -9,7 +9,6 @@ import com.estudiante.techscoop.data.PreferencesManager
 import com.estudiante.techscoop.data.SessionManager
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -27,7 +26,7 @@ import com.estudiante.techscoop.notifications.NotificationScheduler
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-        // Escucha cambios de red para mostrar u ocultar la pantalla offline automáticamente.
+    // Escucha cambios de red para mostrar u ocultar la pantalla offline automáticamente.
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var wasOffline = false
 
@@ -47,8 +46,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-                // Botón de la pantalla offline: vuelve a comprobar conectividad.
-        findViewById<Button>(R.id.btnRetryConnection).setOnClickListener {
+        // Botón de la pantalla offline: vuelve a comprobar conectividad.
+        binding.offlineGate.btnRetryConnection.setOnClickListener {
             applyOfflineUi(userTriggeredRetry = true)
         }
 
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val gate = findViewById<View>(R.id.offlineGate)
+                    val gate = binding.offlineGate.root
                     if (gate.visibility == View.VISIBLE) {
                         moveTaskToBack(true)
                     } else {
@@ -73,13 +72,13 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-                // Al abrir la app: comprueba red, pide permiso de notificaciones (API 33+) y programa WorkManager.
+        // Al abrir la app: comprueba red, pide permiso de notificaciones (API 33+) y programa WorkManager.
         applyOfflineUi()
         requestNotificationPermissionIfNeeded()
         NotificationScheduler.schedule(this)
     }
 
-        // Registra NetworkCallback para reaccionar cuando vuelve Wi‑Fi o datos.
+    // Registra NetworkCallback para reaccionar cuando vuelve Wi‑Fi o datos.
     override fun onStart() {
         super.onStart()
         val cm = getSystemService(ConnectivityManager::class.java) ?: return
@@ -109,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         applyOfflineUi()
     }
 
-        // Android 13+: permiso POST_NOTIFICATIONS obligatorio para mostrar avisos.
+    // Android 13+: permiso POST_NOTIFICATIONS obligatorio para mostrar avisos.
     private fun requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -122,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
-                        // Sin Internet no se cambia de pestaña (evita fragments que llaman API).
+            // Sin Internet no se cambia de pestaña (evita fragments que llaman API).
             if (OfflineState.isActive(this)) return@setOnItemSelectedListener false
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_home -> HomeFragment()
@@ -142,9 +141,9 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-        // Muestra u oculta el include offlineGate y el contenido principal de la app.
+    // Muestra u oculta el include offlineGate y el contenido principal de la app.
     private fun applyOfflineUi(userTriggeredRetry: Boolean = false) {
-        val gate = findViewById<View>(R.id.offlineGate)
+        val gate = binding.offlineGate.root
         if (OfflineState.isActive(this)) {
             gate.visibility = View.VISIBLE
             binding.main.visibility = View.GONE
@@ -162,4 +161,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-

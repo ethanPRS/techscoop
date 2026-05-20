@@ -2,35 +2,42 @@
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.SessionManager
+import com.estudiante.techscoop.databinding.ActivitySignUpBinding
 import com.estudiante.techscoop.repository.AuthRepository
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
+import android.view.inputmethod.EditorInfo
 
 // Registro de cuenta nueva con Firebase (email/contraseña) y validación de formulario.
 class SignUpActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySignUpBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        binding = ActivitySignUpBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val etName = findViewById<TextInputEditText>(R.id.etName)
-        val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
-        val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
-        val etConfirm = findViewById<TextInputEditText>(R.id.etConfirmPassword)
+        // Escuchar el "Enter/Done" del teclado en el último campo
+        binding.etConfirmPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                binding.btnSignUp.performClick()
+                true
+            } else {
+                false
+            }
+        }
 
-                // Valida contraseñas coincidentes y longitud mínima antes de llamar a Firebase.
-        findViewById<Button>(R.id.btnSignUp).setOnClickListener {
-            val name = etName.text?.toString().orEmpty().trim()
-            val email = etEmail.text?.toString().orEmpty().trim()
-            val password = etPassword.text?.toString().orEmpty()
-            val confirm = etConfirm.text?.toString().orEmpty()
+        // Valida contraseñas coincidentes y longitud mínima antes de llamar a Firebase.
+        binding.btnSignUp.setOnClickListener {
+            val name = binding.etName.text?.toString().orEmpty().trim()
+            val email = binding.etEmail.text?.toString().orEmpty().trim()
+            val password = binding.etPassword.text?.toString().orEmpty()
+            val confirm = binding.etConfirmPassword.text?.toString().orEmpty()
 
             when {
                 email.isEmpty() || password.isEmpty() -> {
@@ -46,10 +53,10 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<TextView>(R.id.tvGoToLogin).setOnClickListener { finish() }
+        binding.tvGoToLogin.setOnClickListener { finish() }
     }
 
-        // Crea usuario en Firebase, sincroniza Room y abre MainActivity.
+    // Crea usuario en Firebase, sincroniza Room y abre MainActivity.
     private fun register(name: String, email: String, password: String) {
         lifecycleScope.launch {
             AuthRepository.signUp(email, password, name).fold(
@@ -79,5 +86,3 @@ class SignUpActivity : AppCompatActivity() {
         finish()
     }
 }
-
-

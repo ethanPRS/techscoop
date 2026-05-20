@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
  * Pruebas Instrumentales para la Base de Datos (Room).
  * Requieren correr en un dispositivo o emulador real para crear la base de datos SQL.
  */
+
 @RunWith(AndroidJUnit4::class)
 class DatabaseInstrumentalTest {
     private lateinit var userDao: UserDao
@@ -27,8 +28,7 @@ class DatabaseInstrumentalTest {
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         // Usamos inMemoryDatabaseBuilder para que los datos desaparezcan al terminar la prueba
-        db = Room.inMemoryDatabaseBuilder(
-            context, AppDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, AppDatabase::class.java).build()
         userDao = db.userDao()
     }
 
@@ -42,14 +42,14 @@ class DatabaseInstrumentalTest {
     fun insertAndReadUser() = runBlocking {
         // Preparación
         val user = UserEntity(
-            uid = 1, 
-            name = "Prueba", 
-            email = "prueba@mail.com", 
-            password = "123", 
-            bio = "Bio de prueba", 
-            profileImageUri = null, 
-            status = "activo", 
-            deactivationDate = 0L
+            uid = 1,
+            name = "Prueba",
+            email = "prueba@mail.com",
+            password = "123",
+            bio = "Bio de prueba",
+            profileImageUri = null,
+            status = "activo",
+            deactivationDate = null
         )
 
         // Ejecución (insertar en BD)
@@ -66,14 +66,14 @@ class DatabaseInstrumentalTest {
     fun updateExistingUser() = runBlocking {
         // Preparación: Insertamos al usuario original
         val originalUser = UserEntity(
-            uid = 1, 
-            name = "Original", 
-            email = "original@mail.com", 
-            password = "123", 
-            bio = null, 
-            profileImageUri = null, 
-            status = "activo", 
-            deactivationDate = 0L
+            uid = 1,
+            name = "Original",
+            email = "original@mail.com",
+            password = "123",
+            bio = null,
+            profileImageUri = null,
+            status = "activo",
+            deactivationDate = null
         )
         userDao.insertUser(originalUser)
 

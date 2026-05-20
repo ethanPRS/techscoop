@@ -57,22 +57,38 @@ object AuthRepository {
         }
     }
 
-        // Tras login exitoso, guarda/actualiza el perfil local en SQLite (Room) para ProfileFragment.
-    suspend fun syncUserToRoom(context: Context, email: String, name: String, password: String = "") {
+    // 3 posibles escenarios al iniciar sesión
+    enum class SyncStatus { SUCCESS, DELETED, REQUIRES_REACTIVATION }
+
+    suspend fun syncUserToRoom(context: Context, email: String, name: String, password: String = ""): SyncStatus {
         val dao = AppDatabase.getInstance(context).userDao()
         val repo = UserRepository(dao)
         val existing = repo.getUser()
 
         if (existing != null && existing.email == email) {
-            // Same user logging back in ÔÇö preserve their profile data,
-            // only refresh the password if a new one was provided.
-            if (password.isNotBlank() && password != existing.password) {
-                repo.updateUser(existing.copy(password = password))
+            // Verificar si la cuenta está inactiva
+            if (existing.status == "inactivo" && existing.deactivationDate != null) {
+                val now = java.util.Calendar.getInstance().timeInMillis
+                val daysInactive = (now - existing.deactivationDate) / (1000 * 60 * 60 * 24)
+
+                if (daysInactive >= 30) {
+                    // Pasaron 30 días: Se elimina la cuenta
+                    repo.deleteUser(existing)
+                    auth.currentUser?.delete()?.await()
+                    return SyncStatus.DELETED
+                } else {
+                    // Está en periodo de gracia: Detenemos el login y pedimos confirmación
+                    return SyncStatus.REQUIRES_REACTIVATION
+                }
             }
-            return
+
+            // Login normal (cuenta activa)
+            val finalPassword = if (password.isNotBlank()) password else existing.password
+            repo.updateUser(existing.copy(password = finalPassword))
+            return SyncStatus.SUCCESS
         }
 
-        // Different user or first-time login ÔÇö clear old data and create fresh profile
+        // Usuario nuevo
         repo.clearAll()
         repo.insertUser(
             UserEntity(
@@ -85,9 +101,22 @@ object AuthRepository {
                 deactivationDate = null
             )
         )
+        return SyncStatus.SUCCESS
     }
 
-        // Cierra sesión en Firebase y Google, borra prefs y tabla user_profile local.
+    // Se llama solo si el usuario presiona "Yes" en el diálogo
+    suspend fun reactivateUser(context: Context, email: String, password: String = "") {
+        val dao = AppDatabase.getInstance(context).userDao()
+        val repo = UserRepository(dao)
+        val existing = repo.getUser()
+
+        if (existing != null && existing.email == email) {
+            val finalPassword = if (password.isNotBlank()) password else existing.password
+            repo.updateUser(existing.copy(status = "activo", deactivationDate = null, password = finalPassword))
+        }
+    }
+
+    // Cierra sesión en Firebase y Google, borra prefs y tabla user_profile local.
     suspend fun signOut(context: Context) {
         auth.signOut()
         try {

@@ -22,7 +22,6 @@
         android:layout_marginTop="24dp"
         android:hint="@string/signup_name"
         app:boxBackgroundMode="outline">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etName"
             android:layout_width="match_parent"
@@ -34,9 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Email"
+        android:hint="@string/login_email"
         app:boxBackgroundMode="outline">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
@@ -48,10 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Contraseña"
+        android:hint="@string/login_password"
         app:boxBackgroundMode="outline"
         app:passwordToggleEnabled="true">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
@@ -66,12 +63,12 @@
         android:hint="@string/signup_confirm"
         app:boxBackgroundMode="outline"
         app:passwordToggleEnabled="true">
-
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:imeOptions="actionDone" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -91,4 +88,5 @@
         android:text="@string/signup_go_login"
         android:textColor="#3F51B5"
         android:textSize="14sp" />
+
 </LinearLayout>

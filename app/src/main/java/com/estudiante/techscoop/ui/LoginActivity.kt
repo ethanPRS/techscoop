@@ -1,31 +1,31 @@
 ﻿package com.estudiante.techscoop.ui
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.SessionManager
+import com.estudiante.techscoop.databinding.LoginActivityBinding
 import com.estudiante.techscoop.repository.AuthRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import android.view.inputmethod.EditorInfo
 
 // Pantalla inicial (LAUNCHER): login email, Google Sign-In y enlaces a registro/recuperar.
 class LoginActivity : AppCompatActivity() {
 
-        // Recibe el resultado del intent de Google y extrae el idToken para Firebase.
+    private lateinit var binding: LoginActivityBinding
+
+    // Recibe el resultado del intent de Google y extrae el idToken para Firebase.
     private val googleLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -56,19 +56,28 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
-        val etEmail = findViewById<TextInputEditText>(R.id.etEmail)
-        val etPassword = findViewById<TextInputEditText>(R.id.etPassword)
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        binding = LoginActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val savedEmail = SessionManager.getLastEmail(this)
         if (savedEmail.isNotBlank()) {
-            etEmail.setText(savedEmail)
+            binding.etEmail.setText(savedEmail)
         }
 
-                // Login clásico: valida campos, autentica con Firebase y navega a MainActivity.
-        btnLogin.setOnClickListener {
-            val email = etEmail.text?.toString()?.trim().orEmpty()
-            val password = etPassword.text?.toString().orEmpty()
+        // Escuchar el "Enter/Done" del teclado en el campo de contraseña
+        binding.etPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                binding.btnLogin.performClick() // Simula el toque físico en el botón
+                true
+            } else {
+                false
+            }
+        }
+
+        // Login clásico: valida campos, autentica con Firebase y navega a MainActivity.
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text?.toString()?.trim().orEmpty()
+            val password = binding.etPassword.text?.toString().orEmpty()
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, R.string.login_required_fields, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -77,10 +86,42 @@ class LoginActivity : AppCompatActivity() {
                 AuthRepository.signIn(email, password).fold(
                     onSuccess = { user ->
                         val name = user.displayName ?: email.substringBefore("@")
-                        AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
-                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                        com.estudiante.techscoop.data.SessionManager.loginUser(email)
-                        goToMain()
+
+                        // Evaluamos el estado de la cuenta
+                        val status = AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
+
+                        when (status) {
+                            AuthRepository.SyncStatus.SUCCESS -> {
+                                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                                com.estudiante.techscoop.data.SessionManager.loginUser(email)
+                                goToMain()
+                            }
+                            AuthRepository.SyncStatus.DELETED -> {
+                                Toast.makeText(this@LoginActivity, "Your account was deleted due to 30 days of inactivity.", Toast.LENGTH_LONG).show()
+                                AuthRepository.signOut(this@LoginActivity)
+                            }
+                            AuthRepository.SyncStatus.REQUIRES_REACTIVATION -> {
+                                // Mostramos el diálogo en inglés
+                                androidx.appcompat.app.AlertDialog.Builder(this@LoginActivity)
+                                    .setTitle("Reactivate Account")
+                                    .setMessage("This account was marked as deactivated. Do you want to reactivate it?")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Yes") { _, _ ->
+                                        lifecycleScope.launch {
+                                            AuthRepository.reactivateUser(this@LoginActivity, email, password)
+                                            com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                                            com.estudiante.techscoop.data.SessionManager.loginUser(email)
+                                            goToMain()
+                                        }
+                                    }
+                                    .setNegativeButton("No") { _, _ ->
+                                        lifecycleScope.launch {
+                                            AuthRepository.signOut(this@LoginActivity)
+                                        }
+                                    }
+                                    .show()
+                            }
+                        }
                     },
                     onFailure = { e ->
                         Toast.makeText(
@@ -93,15 +134,15 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.btnGoogleSignIn).setOnClickListener {
+        binding.btnGoogleSignIn.setOnClickListener {
             startGoogleSignIn()
         }
 
-        findViewById<TextView>(R.id.tvRegisterLink).setOnClickListener {
+        binding.tvRegisterLink.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
 
-        findViewById<TextView>(R.id.tvForgotLink).setOnClickListener {
+        binding.tvForgotLink.setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java))
         }
     }
@@ -129,20 +170,54 @@ class LoginActivity : AppCompatActivity() {
         googleLauncher.launch(GoogleSignIn.getClient(this, gso).signInIntent)
     }
 
-        // Intercambia el idToken de Google por una sesión de Firebase Auth.
+    // Intercambia el idToken de Google por una sesión de Firebase Auth.
     private fun signInWithGoogle(idToken: String, email: String?, displayName: String?) {
         lifecycleScope.launch {
             try {
+                // 1. Hacemos el inicio de sesión real con Firebase y Google
                 val result = com.google.firebase.auth.FirebaseAuth.getInstance()
                     .signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
                     .await()
+
                 val user = result.user ?: return@launch
                 val mail = user.email ?: email.orEmpty()
                 val name = user.displayName ?: displayName.orEmpty()
-                AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
-                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                com.estudiante.techscoop.data.SessionManager.loginUser(mail)
-                goToMain()
+
+                // 2. Evaluamos el estado de la cuenta (Sin enviar password)
+                val status = AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
+
+                when (status) {
+                    AuthRepository.SyncStatus.SUCCESS -> {
+                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                        com.estudiante.techscoop.data.SessionManager.loginUser(mail)
+                        goToMain()
+                    }
+                    AuthRepository.SyncStatus.DELETED -> {
+                        Toast.makeText(this@LoginActivity, "Your account was deleted due to 30 days of inactivity.", Toast.LENGTH_LONG).show()
+                        AuthRepository.signOut(this@LoginActivity)
+                    }
+                    AuthRepository.SyncStatus.REQUIRES_REACTIVATION -> {
+                        androidx.appcompat.app.AlertDialog.Builder(this@LoginActivity)
+                            .setTitle("Reactivate Account")
+                            .setMessage("This account was marked as deactivated. Do you want to reactivate it?")
+                            .setCancelable(false)
+                            .setPositiveButton("Yes") { _, _ ->
+                                lifecycleScope.launch {
+                                    AuthRepository.reactivateUser(this@LoginActivity, mail) // Sin password
+                                    com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                                    com.estudiante.techscoop.data.SessionManager.loginUser(mail)
+                                    goToMain()
+                                }
+                            }
+                            .setNegativeButton("No") { _, _ ->
+                                lifecycleScope.launch {
+                                    AuthRepository.signOut(this@LoginActivity)
+                                }
+                            }
+                            .show()
+                    }
+                }
+
             } catch (e: Exception) {
                 Toast.makeText(
                     this@LoginActivity,
@@ -153,7 +228,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-        // Entra a la app principal y limpia el back stack para no volver al login con Atrás.
+    // Entra a la app principal y limpia el back stack para no volver al login con Atrás.
     private fun goToMain() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -161,6 +236,3 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 }
-
-
-

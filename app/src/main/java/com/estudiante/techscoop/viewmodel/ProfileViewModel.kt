@@ -9,6 +9,8 @@ import com.estudiante.techscoop.data.local.UserEntity
 import com.estudiante.techscoop.repository.UserRepository
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 class ProfileViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -44,11 +46,19 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             loading.postValue(true)
             try {
                 user.value?.let { currentUser ->
+                    // 1. Si se ingresó una contraseña nueva válida, se actualiza en la nube de Firebase
+                    if (pass.isNotBlank() && pass != currentUser.password) {
+                        FirebaseAuth.getInstance().currentUser?.updatePassword(pass)?.await()
+                    }
+
+                    // 2. Si pass está vacío, se preserva la contraseña que ya existía en Room
+                    val finalPassword = if (pass.isNotBlank()) pass else currentUser.password
+
                     val updatedUser = currentUser.copy(
                         name = name,
                         email = email,
                         bio = bio,
-                        password = pass,
+                        password = finalPassword,
                         profileImageUri = uri ?: currentUser.profileImageUri
                     )
                     repository.updateUser(updatedUser)

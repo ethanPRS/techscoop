@@ -93,11 +93,13 @@ class ProfileFragment : Fragment() {
         isEditing = editing
 
         if (editing) {
-            // Populate EditTexts from the current read-only values
             binding.etName.setText(binding.tvName.text)
             binding.etEmail.setText(binding.tvEmail.text)
             binding.etBio.setText(binding.tvBio.text)
-            binding.etPassword.setText(binding.tvPassword.tag as? String ?: "")
+
+            // Inicializa campos de nueva contraseña completamente vacíos
+            binding.etPassword.setText("")
+            binding.etConfirmPasswordProfile.setText("")
 
             binding.layoutReadOnly.visibility = View.GONE
             binding.layoutEditable.visibility = View.VISIBLE
@@ -209,25 +211,31 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnSaveChanges.setOnClickListener {
+            val pass = binding.etPassword.text.toString().trim()
+            val confirmPass = binding.etConfirmPasswordProfile.text.toString().trim()
+
+            // Si el usuario intentó escribir algo en el campo de contraseña, validamos la coincidencia
+            if (pass.isNotEmpty() && pass != confirmPass) {
+                Toast.makeText(requireContext(), "Las nuevas contraseñas no coinciden", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             viewModel.updateProfile(
                 name = binding.etName.text.toString(),
-                email = binding.etEmail.text.toString(),
+                email = binding.tvEmail.text.toString(), // Forzar el email original persistente
                 bio = binding.etBio.text.toString(),
-                pass = binding.etPassword.text.toString(),
+                pass = pass, // Se envía vacío si decidió no cambiarla
                 uri = currentImageUri?.toString()
             )
-            // Preferences are now saved automatically via the OnItemSelectedListener
 
             Toast.makeText(requireContext(), "Profile updated", Toast.LENGTH_SHORT).show()
-
-            // Switch back to read-only mode after saving
             setEditMode(false)
         }
 
         binding.btnDeactivate.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Deactivate Account")
-                .setMessage("Your account will become inactive and be deleted in one month. Continue?")
+                .setMessage("Your account will become inactive and be permanently deleted in 30 days. Continue?")
                 .setPositiveButton("Deactivate") { _, _ ->
                     viewModel.deactivateAccount()
                     signOutAndGoToLogin()

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Layout del flujo de login (email, Google Sign-In, enlaces a registro y recuperar contraseña) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TechScoop"
+        android:text="@string/app_name"
         android:textColor="#3F51B5"
         android:textSize="36sp"
         android:textStyle="bold" />
@@ -22,14 +21,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="32dp"
-        android:text="Noticias tecnológicas en un solo lugar"
+        android:text="@string/login_tagline"
         android:textColor="#666666"
         android:textSize="14sp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/login_email"
         app:boxBackgroundMode="outline">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
@@ -42,14 +41,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Contraseña"
+        android:hint="@string/login_password"
         app:boxBackgroundMode="outline"
         app:passwordToggleEnabled="true">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:imeOptions="actionDone" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -58,10 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="#3F51B5"
-        android:text="Entrar"
+        android:text="@string/login_button"
         android:textColor="#FFFFFF" />
 
-    <!-- Inicia Google Sign-In; requiere Firebase + SHA-1 del keystore del equipo -->
     <Button
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="match_parent"
@@ -71,7 +70,6 @@
         android:text="@string/login_google_sign_in"
         android:textColor="#3F51B5" />
 
-    <!-- Navega a SignUpActivity -->
     <TextView
         android:id="@+id/tvRegisterLink"
         android:layout_width="wrap_content"
@@ -81,7 +79,6 @@
         android:textColor="#3F51B5"
         android:textSize="14sp" />
 
-    <!-- Navega a ForgotPasswordActivity -->
     <TextView
         android:id="@+id/tvForgotLink"
         android:layout_width="wrap_content"
@@ -90,4 +87,5 @@
         android:text="@string/login_forgot_password"
         android:textColor="#3F51B5"
         android:textSize="14sp" />
+
 </LinearLayout>
