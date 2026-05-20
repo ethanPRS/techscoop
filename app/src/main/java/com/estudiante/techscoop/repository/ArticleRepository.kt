@@ -19,26 +19,30 @@ sealed class ApiResult {
     data class Exception(val error: String) : ApiResult()
 }
 
-class ArticleRepository {
+class ArticleRepository(
+    private val injectedApi: APIService? = null
+) {
 
     companion object {
         private const val BASE_URL = "https://newsapi.org/"
     }
 
     val api: APIService by lazy {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
+        injectedApi ?: run {
+            val logging = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            val client = OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build()
 
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(APIService::class.java)
+            Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(APIService::class.java)
+        }
     }
 
     suspend fun getNews(): ApiResult {

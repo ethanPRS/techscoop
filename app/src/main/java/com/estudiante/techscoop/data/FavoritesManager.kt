@@ -40,4 +40,13 @@ object FavoritesManager {
         // Devuelve verdadero si algún artículo en la lista tiene la misma URL
         return _favoriteArticlesList.any { it.url == article.url }
     }
+
+    /**
+     * Limpia la lista de favoritos. 
+     * Principalmente útil para garantizar aislamiento en las pruebas unitarias.
+     */
+    fun clearFavorites() {
+        _favoriteArticlesList.clear()
+        _favoriteArticles.postValue(_favoriteArticlesList.toList())
+    }
 }
