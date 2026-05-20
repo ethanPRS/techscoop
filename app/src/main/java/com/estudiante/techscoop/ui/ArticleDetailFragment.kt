@@ -7,12 +7,15 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import coil.load
 import com.estudiante.techscoop.R
 import com.estudiante.techscoop.databinding.DetalleFragmentBinding
 import com.estudiante.techscoop.model.DataArticle
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ArticleDetailFragment : Fragment(R.layout.detalle_fragment) {
 
@@ -22,6 +25,8 @@ class ArticleDetailFragment : Fragment(R.layout.detalle_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = DetalleFragmentBinding.bind(view)
+
+        showBottomNav()
 
         val article = arguments?.getSerializable("article") as? DataArticle
 
@@ -77,6 +82,13 @@ class ArticleDetailFragment : Fragment(R.layout.detalle_fragment) {
 
             loadUrl(url)
         }
+    }
+
+    private fun showBottomNav() {
+        val nav = activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation) ?: return
+        val params = nav.layoutParams as? CoordinatorLayout.LayoutParams ?: return
+        val behavior = params.behavior as? HideBottomViewOnScrollBehavior ?: return
+        behavior.slideUp(nav)
     }
 
     override fun onDestroyView() {
