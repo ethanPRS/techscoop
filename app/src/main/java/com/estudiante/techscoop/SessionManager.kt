@@ -1,4 +1,4 @@
-﻿package com.estudiante.techscoop
+package com.estudiante.techscoop
 
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
