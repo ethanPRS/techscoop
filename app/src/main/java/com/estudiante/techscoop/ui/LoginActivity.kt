@@ -1,4 +1,4 @@
-﻿package com.estudiante.techscoop.ui
+package com.estudiante.techscoop.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -87,41 +87,11 @@ class LoginActivity : AppCompatActivity() {
                     onSuccess = { user ->
                         val name = user.displayName ?: email.substringBefore("@")
 
-                        // Evaluamos el estado de la cuenta
-                        val status = AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
-
-                        when (status) {
-                            AuthRepository.SyncStatus.SUCCESS -> {
-                                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                                com.estudiante.techscoop.data.SessionManager.loginUser(email)
-                                goToMain()
-                            }
-                            AuthRepository.SyncStatus.DELETED -> {
-                                Toast.makeText(this@LoginActivity, "Your account was deleted due to 30 days of inactivity.", Toast.LENGTH_LONG).show()
-                                AuthRepository.signOut(this@LoginActivity)
-                            }
-                            AuthRepository.SyncStatus.REQUIRES_REACTIVATION -> {
-                                // Mostramos el diálogo en inglés
-                                androidx.appcompat.app.AlertDialog.Builder(this@LoginActivity)
-                                    .setTitle("Reactivate Account")
-                                    .setMessage("This account was marked as deactivated. Do you want to reactivate it?")
-                                    .setCancelable(false)
-                                    .setPositiveButton("Yes") { _, _ ->
-                                        lifecycleScope.launch {
-                                            AuthRepository.reactivateUser(this@LoginActivity, email, password)
-                                            com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                                            com.estudiante.techscoop.data.SessionManager.loginUser(email)
-                                            goToMain()
-                                        }
-                                    }
-                                    .setNegativeButton("No") { _, _ ->
-                                        lifecycleScope.launch {
-                                            AuthRepository.signOut(this@LoginActivity)
-                                        }
-                                    }
-                                    .show()
-                            }
-                        }
+                        // Sincroniza el perfil local
+                        AuthRepository.syncUserToRoom(this@LoginActivity, email, name, password)
+                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                        com.estudiante.techscoop.data.SessionManager.loginUser(email)
+                        goToMain()
                     },
                     onFailure = { e ->
                         Toast.makeText(
@@ -183,40 +153,11 @@ class LoginActivity : AppCompatActivity() {
                 val mail = user.email ?: email.orEmpty()
                 val name = user.displayName ?: displayName.orEmpty()
 
-                // 2. Evaluamos el estado de la cuenta (Sin enviar password)
-                val status = AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
-
-                when (status) {
-                    AuthRepository.SyncStatus.SUCCESS -> {
-                        com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                        com.estudiante.techscoop.data.SessionManager.loginUser(mail)
-                        goToMain()
-                    }
-                    AuthRepository.SyncStatus.DELETED -> {
-                        Toast.makeText(this@LoginActivity, "Your account was deleted due to 30 days of inactivity.", Toast.LENGTH_LONG).show()
-                        AuthRepository.signOut(this@LoginActivity)
-                    }
-                    AuthRepository.SyncStatus.REQUIRES_REACTIVATION -> {
-                        androidx.appcompat.app.AlertDialog.Builder(this@LoginActivity)
-                            .setTitle("Reactivate Account")
-                            .setMessage("This account was marked as deactivated. Do you want to reactivate it?")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes") { _, _ ->
-                                lifecycleScope.launch {
-                                    AuthRepository.reactivateUser(this@LoginActivity, mail) // Sin password
-                                    com.estudiante.techscoop.data.SessionManager.init(applicationContext)
-                                    com.estudiante.techscoop.data.SessionManager.loginUser(mail)
-                                    goToMain()
-                                }
-                            }
-                            .setNegativeButton("No") { _, _ ->
-                                lifecycleScope.launch {
-                                    AuthRepository.signOut(this@LoginActivity)
-                                }
-                            }
-                            .show()
-                    }
-                }
+                // 2. Sincroniza el perfil local
+                AuthRepository.syncUserToRoom(this@LoginActivity, mail, name)
+                com.estudiante.techscoop.data.SessionManager.init(applicationContext)
+                com.estudiante.techscoop.data.SessionManager.loginUser(mail)
+                goToMain()
 
             } catch (e: Exception) {
                 Toast.makeText(
